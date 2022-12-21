@@ -80,3 +80,37 @@ input:invalid {
 	padding-left: 20px;
     padding-right: 20px;
 }
+
+/* boardList.php css 요소 */
+
+.menubar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: rgb(89, 89, 89);
+    width: 100%;
+    min-height: 50px;
+}
+
+.menutitle {
+    font-size: 30px;
+    color: white;
+    padding: 10px;
+}
+
+.info-group {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.user-info {
+    color: white;
+    padding: 10px;
+}
+
+.logout-btn {
+    color: black;
+    padding-left: 10px;
+    padding-right: 10px;
