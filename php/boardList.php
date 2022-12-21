@@ -21,12 +21,13 @@
     <title>게시글 리스트</title>
 </head>
 <body>
-    <div class="menubar">
-        <div class="menutitle">CMSKOREA Board</div>
-        <div class="info-group">
-            <div class="user-info"><?= $_SESSION['userName']?></div>
-            <input class="btn logout-btn" type="button" value="로그아웃" onclick="location.href='./logout.php'">
-        </div>
-    </div>
+<!--     <div class="menubar"> -->
+<!--         <div class="menutitle">CMSKOREA Board</div> -->
+<!--         <div class="info-group"> -->
+<!--            <div class="user-info"><?= $_SESSION['userName']?></div> -->
+<!--            <input class="btn logout-btn" type="button" value="로그아웃" onclick="location.href='./logout.php'">  -->
+<!--         </div> -->
+<!--     </div> -->
+    <?= include_once dirname(__DIR__) . '/html/commonHeader.html';?>
 </body>
 </html>
