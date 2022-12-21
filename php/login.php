@@ -38,11 +38,6 @@
         $_SESSION['userId'] = $row['id'];
         $_SESSION['userName'] = $row['name'];
         mysqli_close($con);
-    }
-    
-    if (!isset($_SESSION)) {
-        echo "문제 발생!<br>";
-    } else {
-        echo $_SESSION['userId']."</br>";
-        echo $row['id'] . ", " . $row['name'] . ", " . $row['telNumber'];
+        
+        header("Location: ../php/boardList.php");
     }
