@@ -8,29 +8,41 @@
     include dirname(__DIR__) . '/dbCon.php';
     include dirname(__DIR__) . '/var/errMessage.php';
     
-    $userID = $_POST['userID'];
-    $userPW = $_POST['userPW'];
+    $userId = $_POST['userId'];
+    $userPw = $_POST['userPw'];
 
-    if (!$userID) {
+    if (!$userId) {
         errMessage("아이디를 입력해주세요.");
-    } else if (!$userPW) {
+    } else if (!$userPw) {
         errMessage("비밀번호를 입력해주세요.");
     }
     
-    $sql = $con->prepare("
-        SELECT * FROM member where id = :userID
-    ");
-    $sql->bindParam(':userID', $userID);
-    $sql->execute();
-    $res = $sql->fetch();
+    $filtered = array(
+        'fUserId' => mysqli_real_escape_string($con, $userId),
+        'fUserPw' => mysqli_real_escape_string($con, $userPw)
+    );
+    $sql = "SELECT * FROM member where id = '{$filtered['fUserId']}'";
+    $resultSet = mysqli_query($con, $sql);
+    if (!$resultSet) {
+        errMessage("로그인 중 에러가 발생했습니다. 관리자에게 문의하십시오.");
+    }
+    $row = mysqli_fetch_array($resultSet);
 
-    if (!isset($res['id'])) {
-        errMessage("존재하지 않는 아이디입니다.");
-    } else if (md5($userPW) != $res['pw']) {
+    if (!isset($row['id'])) {
+        errMessage("아이디가 일치하지 않습니다.");
+    } else if (md5($filtered['fUserPw']) != $row['pw']) {
         errMessage("비밀번호가 일치하지 않습니다.");
-    } else if (!isset($res)) {
+    } else if (!isset($row)) {
         errMessage("로그인 중 에러가 발생했습니다. 관리자에게 문의하십시오.");
     } else {
-        $_SESSION['userId'] = $res['id'];
-        $_SESSION['userName'] = $res['name'];
+        $_SESSION['userId'] = $row['id'];
+        $_SESSION['userName'] = $row['name'];
+        mysqli_close($con);
+    }
+    
+    if (!isset($_SESSION)) {
+        echo "문제 발생!<br>";
+    } else {
+        echo $_SESSION['userId']."</br>";
+        echo $row['id'] . ", " . $row['name'] . ", " . $row['telNumber'];
     }

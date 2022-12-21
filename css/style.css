@@ -1,3 +1,27 @@
 .sep-line {
+	margin: 10px 0 5px;
+	padding-bottom: 9px;
 	border-bottom: 1px solid rgb(208, 206, 206);
+	font-size: large;
+}
+
+.center {
+	display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.control-label-left {
+	padding-top: 7px;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.des-padding {
+	padding: 5px 0 15px
+}
+
+input:invalid {
+	border: 3px solid red;
 }
