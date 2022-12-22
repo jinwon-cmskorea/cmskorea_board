@@ -114,3 +114,18 @@ input:invalid {
     color: black;
     padding-left: 10px;
     padding-right: 10px;
+}
+
+/* logoutOk.html css 요소 */
+.logout-text {
+	font-size: large;
+	margin: 20px;
+	padding-top: 15px;
+}
+
+.logoutOk-btn {
+	margin-bottom : 20px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	font-size: large;
+}

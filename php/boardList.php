@@ -28,6 +28,6 @@
 <!--            <input class="btn logout-btn" type="button" value="로그아웃" onclick="location.href='./logout.php'">  -->
 <!--         </div> -->
 <!--     </div> -->
-    <?= include_once dirname(__DIR__) . '/html/commonHeader.html';?>
+    <?php include_once dirname(__DIR__) . '/html/commonHeader.html';?>
 </body>
 </html>
