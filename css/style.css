@@ -116,6 +116,86 @@ input:invalid {
     padding-right: 10px;
 }
 
+/* boardList.php - 페이지 상단 요소 */
+.list-title {
+	font-size: x-large;
+	padding-top: 10px;
+	padding-bottom: 15px;
+}
+
+.list-descript {
+	font-size: medium;
+	border: 1px solid rgb(191, 191, 191);
+	border-radius: 8px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+/* boardList.php - 게시글 상단 요소 */
+.board-upper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding : 10px;
+}
+
+.selectbox {
+	width: 100px;
+	background-color: rgb(191, 191, 191);
+	border: 1px solid rgb(191, 191, 191);
+	color: white;
+	padding: 4px 0 4px;
+	text-align: center;
+}
+
+.s-input {
+    border: 1px solid rgb(191, 191, 191);
+}
+
+.s-button {
+    background-color: rgb(143, 170, 220);
+    border-radius: 4px;
+    padding: 4px 30px 4px 30px;
+    color: white;
+}
+
+.write-btn {
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+.view-btn {
+	background-color: rgb(255, 192, 0);
+	color: white;
+	padding-right: 20px;
+	padding-left: 20px;
+}
+
+.del-btn {
+	background-color: rgb(255, 0, 0);
+    color: white;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+/* boardList.php - 게시글 리스트 요소 */
+.add-top-line {
+	border-top: 1px solid rgb(191, 191, 191);
+}
+
+.list-body {
+	margin-top: 50px;
+}
+
+.add-bottom-line {
+    border-bottom: 1px solid rgb(191, 191, 191);
+}
+
+/* boardLis.phpt - 게시글 하단 페이징 요소 */
+.pagination > li > a {
+	float: none;
+}
+
 /* logoutOk.html css 요소 */
 .logout-text {
 	font-size: large;
