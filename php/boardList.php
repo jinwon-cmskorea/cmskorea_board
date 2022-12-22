@@ -8,11 +8,26 @@
         errMessage("로그인을 먼저 해주세요.");
         echo "<script type=\"text/javascript\">document.location.href='../html/login.html';</script>";
     }
+    /* default 필드 네임 지정 */
+    $fieldName = "no";
+    if (isset($_GET['order']) && $_GET['order']) {
+        $order = $_GET['order'];
+        if ($order == "DESC") {
+            $order = "ASC";
+        } else {
+            $order = "DESC";
+        }
+    } else {
+        $order = "DESC";
+    }
+    
+    if (isset($_GET['orderField']) && $_GET['orderField']) {
+        $fieldName = $_GET['orderField'];
+    }
     
     /* 게시글을 불러오기 위한 select 문 */
-    $sql = "
-        SELECT * FROM board ORDER BY no DESC
-    ";
+    $sql = "SELECT * FROM board ORDER BY {$fieldName} {$order}";
+    
     $result = mysqli_query($con, $sql);
 ?>
 <!DOCTYPE html>
@@ -25,6 +40,13 @@
     <link rel="stylesheet" href="../css/style.css" type="text/css">
     <script src="../bootstrap-3.3.2-dist/js/bootstrap.js" type="javascript"></script>
     <title>게시글 리스트</title>
+    <script type="text/javascript">
+        function sortTable(fieldName) {
+            var fieldName = fieldName;
+            var order = "<?php echo $order;?>";
+            window.location.href = "http://localhost/cmskorea_board/php/boardList.php?orderField=" + fieldName + "&order=" + order;
+        }
+    </script>
 </head>
 <body>
     <?php include_once dirname(__DIR__) . '/html/commonHeader.html';?>
@@ -61,10 +83,10 @@
         <table class="table table-hover">
             <thead class="add-top-line">
                 <tr>
-                    <th class="col-sm-1">번호</th>
-                    <th class="col-sm-7" style="text-align: center;">제목</th>
-                    <th class="col-sm-1">작성자</th>
-                    <th class="col-sm-1">작성일자</th>
+                    <th class="col-sm-1" onclick="sortTable('no')" style="cursor: pointer;">번호 <?php echo $temp; ?></th>
+                    <th class="col-sm-7" onclick="sortTable('title')" style="text-align: center; cursor: pointer;">제목</th>
+                    <th class="col-sm-1" onclick="sortTable('writer')" style="cursor: pointer;">작성자</th>
+                    <th class="col-sm-1" onclick="sortTable('insertTime')" style="cursor: pointer;">작성일자</th>
                     <th class="col-sm-2" style="text-align: center;">작업</th>
                 </tr>
             </thead>
