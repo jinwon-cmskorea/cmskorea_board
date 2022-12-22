@@ -131,6 +131,10 @@ input:invalid {
 	padding-bottom: 10px;
 }
 
+.small-ele {
+	color: rgb(132, 151, 76);
+}
+
 /* boardList.php - 게시글 상단 요소 */
 .board-upper {
     display: flex;

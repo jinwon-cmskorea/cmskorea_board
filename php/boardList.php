@@ -8,6 +8,12 @@
         errMessage("로그인을 먼저 해주세요.");
         echo "<script type=\"text/javascript\">document.location.href='../html/login.html';</script>";
     }
+    
+    /* 게시글을 불러오기 위한 select 문 */
+    $sql = "
+        SELECT * FROM board ORDER BY no DESC
+    ";
+    $result = mysqli_query($con, $sql);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +53,7 @@
                 <input class="btn s-button" type="submit" value="검색">
             </form>
             <div>
-                <input class="btn bg-primary write-btn" type="button" value="작    성">
+                <input class="btn bg-primary write-btn" type="button" onclick="location.href='./writeBoard.php';" value="작    성">
             </div>
         </div>
         <!-- 검색 부분, 작성버튼 끝-->
@@ -63,11 +69,16 @@
                 </tr>
             </thead>
             <tbody class="add-bottom-line">
+                <?php
+                    /*  */
+                    while ($row = mysqli_fetch_array($result)) {
+                        $ymd = substr($row['insertTime'], 0, 10);
+                ?>
                 <tr>
-                    <td>10000</td>
-                    <td>테스트용 항목입니다.</td>
-                    <td>홍길동</td>
-                    <td>22.12.22</td>
+                    <td><?php echo $row['no']; ?></td>
+                    <td><?php echo $row['title']; ?></td>
+                    <td><?php echo $row['writer']; ?></td>
+                    <td><?php echo $ymd; ?></td>
                     <td>
                         <div style="text-align: center;">
                             <input class="btn view-btn" type="button" value="조회">
@@ -75,18 +86,9 @@
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td>20000</td>
-                    <td>테스트용 항목입니다2.</td>
-                    <td>으아악</td>
-                    <td>22.12.22</td>
-                    <td>
-                        <div style="text-align: center;">
-                            <input class="btn view-btn" type="button" value="조회">
-                            <input class="btn del-btn" type="button" value="삭제">
-                        </div>
-                    </td>
-                </tr>
+                <?php
+                    }
+                ?>
             </tbody>
         </table>
         <!-- 게시글 리스트 테이블 끝 -->
