@@ -13,6 +13,24 @@
         echo "<script type=\"text/javascript\">document.location.href='../html/login.html';</script>";
     }
     
+    /*
+     * 페이징 관련 코드
+     * 1. 레코드 갯수 확인
+     */
+    if (isset($_GET['page']) && $_GET['page']) {
+        $page = $_GET['page'];
+    } else {
+        $page = 1;
+    }
+    $pageSql = "SELECT * FROM board WHERE {$category} LIKE '%{$search}%'";
+    $pageRes = mysqli_query($con, $pageSql);
+    $totalRow = mysqli_num_rows($pageRes);
+    
+    /* 2. 페이징 계산 */
+    $per = 10;
+    $start = ($page - 1) * $per + 1;
+    $start -= 1;
+    
     /* default 필드 네임 지정 */
     $fieldName = "no";
     
@@ -23,11 +41,9 @@
     if (isset($_GET['order']) && $_GET['order']) {
         $order = $_GET['order'];
         if ($order == "DESC") {
-            $order = "ASC";
-            $temp = "▲";
-        } else {
-            $order = "DESC";
             $temp = "▼";
+        } else {
+            $temp = "▲";
         }
     } else {
         $order = "DESC";
@@ -43,7 +59,7 @@
     $urlArr = explode("&", $present);
     
     /* 게시글을 불러오기 위한 select 문 */
-    $sql = "SELECT * FROM board WHERE {$category} LIKE '%{$search}%' ORDER BY {$fieldName} {$order}";
+    $sql = "SELECT * FROM board WHERE {$category} LIKE '%{$search}%' ORDER BY {$fieldName} {$order} LIMIT {$start}, {$per}";
     
     $result = mysqli_query($con, $sql);
     
@@ -72,9 +88,9 @@
         });
         function sortTable(fieldName) {
             var fieldName = fieldName;
-            var order = "<?php echo $order;?>";
+            var order = "<?php echo $order == "DESC" ? "ASC" : "DESC";?>";
             //window.location.href = "http://localhost/cmskorea_board/php/boardList.php?orderField=" + fieldName + "&order=" + order;
-            window.location.href = "<?php echo $urlArr[0]."&".$urlArr[1] ?>" + "&orderField=" + fieldName + "&order=" + order;
+            window.location.href = "<?php echo $urlArr[0]."&".$urlArr[1]."&".$urlArr[2] ?>" + "&orderField=" + fieldName + "&order=" + order;
         }
     </script>
 </head>
@@ -147,11 +163,55 @@
         <!-- 페이징 버튼 -->
         <div class="text-center">
             <ul class="pagination page-center">
-                <li><a>first</a></li>
-                <li class="active"><a>1</a></li>
-                <li><a>2</a></li>
-                <li><a>3</a></li>
-                <li><a>last</a></li>
+                <?php 
+                    if ($page > 1) {
+                        echo "
+                            <li>
+                                <a href=\"searchList.php?page=1&category={$category}&search={$search}&orderField={$fieldName}&order={$order}\" aria-label=\"Previous\">
+                                    <span aria-hidden=\"true\">&laquo;</span>
+                                </a>
+                            </li>
+                        ";
+                    } else {
+                        echo "
+                            <li class=\"disabled\">
+                                <a href=\"#\" aria-label=\"Previous\">
+                                    <span aria-hidden=\"true\">&laquo;</span>
+                                </a>
+                            </li>
+                        ";
+                    }
+                    
+                    $totalPage = ceil($totalRow / $per);
+                    $pageNum = 1;
+                    
+                    while ($pageNum <= $totalPage) {
+                        if ($page == $pageNum) {
+                            echo "<li class=\"active\"><a href=\"searchList.php?page={$pageNum}&category={$category}&search={$search}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
+                        } else {
+                            echo "<li><a href=\"searchList.php?page={$pageNum}&category={$category}&search={$search}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
+                        }
+                        $pageNum++;
+                    }
+                    
+                    if($page < $totalPage) {
+                        echo "
+                            <li>
+                                <a href=\"searchList.php?page={$totalPage}&category={$category}&search={$search}&orderField={$fieldName}&order={$order}\" aria-label=\"next\">
+                                    <span aria-hidden=\"true\">&raquo;</span>
+                                </a>
+                            </li>
+                        ";
+                    } else {
+                        echo "
+                            <li class=\"disabled\">
+                                <a href=\"#\" aria-label=\"next\">
+                                    <span aria-hidden=\"true\">&raquo;</span>
+                                </a>
+                            </li>
+                        ";
+                    }
+                ?>
             </ul>
         </div>
         <!-- 페이징 버튼 끝 -->

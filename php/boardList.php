@@ -51,7 +51,7 @@
     }
     
     /* 게시글을 불러오기 위한 select 문 */
-    $sql = "SELECT * FROM board ORDER BY {$fieldName} {$order} LIMIT $start, $per";
+    $sql = "SELECT * FROM board ORDER BY {$fieldName} {$order} LIMIT {$start}, {$per}";
     
     $result = mysqli_query($con, $sql);
     
@@ -108,6 +108,7 @@
                     <option value="title">제목</option>
                     <option value="insertTime">작성일자</option>
                 </select>
+                <input type="hidden" name="page_hidden" value="<?php echo $page;?>" />
                 <input class="s-input" type="text" name="search" autocomplete="off" required>
                 <input class="btn s-button" type="submit" value="검색">
             </form>
