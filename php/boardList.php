@@ -9,6 +9,24 @@
         echo "<script type=\"text/javascript\">document.location.href='../html/login.html';</script>";
     }
     
+    /*
+     * 페이징 관련 코드
+     * 1. 레코드 갯수 확인
+     */
+    if (isset($_GET['page'])) {
+        $page = $_GET['page'];
+    } else {
+        $page = 1;
+    }
+    $pageSql = "SELECT * FROM board";
+    $pageRes = mysqli_query($con, $pageSql);
+    $totalRow = mysqli_num_rows($pageRes);
+    
+    /* 2. 페이징 계산 */
+    $per = 10;
+    $start = ($page - 1) * $per + 1;
+    $start -= 1;
+    
     /* default 필드 네임 지정 */
     $fieldName = "no";
     
@@ -35,7 +53,7 @@
     }
     
     /* 게시글을 불러오기 위한 select 문 */
-    $sql = "SELECT * FROM board ORDER BY {$fieldName} {$order}";
+    $sql = "SELECT * FROM board ORDER BY {$fieldName} {$order} LIMIT $start, $per";
     
     $result = mysqli_query($con, $sql);
     
@@ -65,7 +83,7 @@
         function sortTable(fieldName) {
             var fieldName = fieldName;
             var order = "<?php echo $order;?>";
-            window.location.href = "http://localhost/cmskorea_board/php/boardList.php?orderField=" + fieldName + "&order=" + order;
+            window.location.href = "http://localhost/cmskorea_board/php/boardList.php?page=<?php echo $page;?>&orderField=" + fieldName + "&order=" + order;
         }
     </script>
 </head>
@@ -138,11 +156,55 @@
         <!-- 페이징 버튼 -->
         <div class="text-center">
             <ul class="pagination page-center">
-                <li><a>first</a></li>
-                <li class="active"><a>1</a></li>
-                <li><a>2</a></li>
-                <li><a>3</a></li>
-                <li><a>last</a></li>
+                <?php 
+                    if ($page > 1) {
+                        echo "
+                            <li>
+                                <a href=\"boardList.php?page=1\" aria-label=\"Previous\">
+                                    <span aria-hidden=\"true\">&laquo;</span>
+                                </a>
+                            </li>
+                        ";
+                    } else {
+                        echo "
+                            <li class=\"disabled\">
+                                <a href=\"boardList.php?page=1\" aria-label=\"Previous\">
+                                    <span aria-hidden=\"true\">&laquo;</span>
+                                </a>
+                            </li>
+                        ";
+                    }
+                    
+                    $totalPage = ceil($totalRow / $per);
+                    $pageNum = 1;
+                    
+                    while ($pageNum <= $totalPage) {
+                        if ($page == $pageNum) {
+                            echo "<li class=\"active\"><a href=\"boardList.php?page=$pageNum\">$pageNum</a></li>";
+                        } else {
+                            echo "<li><a href=\"boardList.php?page=$pageNum\">$pageNum</a></li>";
+                        }
+                        $pageNum++;
+                    }
+                    
+                    if($page < $totalPage) {
+                        echo "
+                            <li>
+                                <a href=\"boardList.php?page=$totalPage\" aria-label=\"next\">
+                                    <span aria-hidden=\"true\">&raquo;</span>
+                                </a>
+                            </li>
+                        ";
+                    } else {
+                        echo "
+                            <li class=\"disabled\">
+                                <a href=\"boardList.php?page=$totalPage\" aria-label=\"next\">
+                                    <span aria-hidden=\"true\">&raquo;</span>
+                                </a>
+                            </li>
+                        ";
+                    }
+                ?>
             </ul>
         </div>
         <!-- 페이징 버튼 끝 -->
