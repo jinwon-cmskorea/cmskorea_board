@@ -13,7 +13,7 @@
      * 페이징 관련 코드
      * 1. 레코드 갯수 확인
      */
-    if (isset($_GET['page'])) {
+    if (isset($_GET['page']) && $_GET['page']) {
         $page = $_GET['page'];
     } else {
         $page = 1;
@@ -37,11 +37,9 @@
     if (isset($_GET['order']) && $_GET['order']) {
         $order = $_GET['order'];
         if ($order == "DESC") {
-            $order = "ASC";
-            $temp = "▲";
-        } else {
-            $order = "DESC";
             $temp = "▼";
+        } else {
+            $temp = "▲";
         }
     } else {
         $order = "DESC";
@@ -82,7 +80,7 @@
         });
         function sortTable(fieldName) {
             var fieldName = fieldName;
-            var order = "<?php echo $order;?>";
+            var order = "<?php echo $order == "DESC" ? "ASC" : "DESC";?>";
             window.location.href = "http://localhost/cmskorea_board/php/boardList.php?page=<?php echo $page;?>&orderField=" + fieldName + "&order=" + order;
         }
     </script>
@@ -160,7 +158,7 @@
                     if ($page > 1) {
                         echo "
                             <li>
-                                <a href=\"boardList.php?page=1\" aria-label=\"Previous\">
+                                <a href=\"boardList.php?page=1&orderField={$fieldName}&order={$order}\" aria-label=\"Previous\">
                                     <span aria-hidden=\"true\">&laquo;</span>
                                 </a>
                             </li>
@@ -168,7 +166,7 @@
                     } else {
                         echo "
                             <li class=\"disabled\">
-                                <a href=\"boardList.php?page=1\" aria-label=\"Previous\">
+                                <a href=\"#\" aria-label=\"Previous\">
                                     <span aria-hidden=\"true\">&laquo;</span>
                                 </a>
                             </li>
@@ -180,9 +178,9 @@
                     
                     while ($pageNum <= $totalPage) {
                         if ($page == $pageNum) {
-                            echo "<li class=\"active\"><a href=\"boardList.php?page=$pageNum\">$pageNum</a></li>";
+                            echo "<li class=\"active\"><a href=\"boardList.php?page={$pageNum}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
                         } else {
-                            echo "<li><a href=\"boardList.php?page=$pageNum\">$pageNum</a></li>";
+                            echo "<li><a href=\"boardList.php?page={$pageNum}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
                         }
                         $pageNum++;
                     }
@@ -190,7 +188,7 @@
                     if($page < $totalPage) {
                         echo "
                             <li>
-                                <a href=\"boardList.php?page=$totalPage\" aria-label=\"next\">
+                                <a href=\"boardList.php?page={$totalPage}&orderField={$fieldName}&order={$order}\" aria-label=\"next\">
                                     <span aria-hidden=\"true\">&raquo;</span>
                                 </a>
                             </li>
@@ -198,7 +196,7 @@
                     } else {
                         echo "
                             <li class=\"disabled\">
-                                <a href=\"boardList.php?page=$totalPage\" aria-label=\"next\">
+                                <a href=\"#\" aria-label=\"next\">
                                     <span aria-hidden=\"true\">&raquo;</span>
                                 </a>
                             </li>
