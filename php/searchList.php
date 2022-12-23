@@ -3,6 +3,10 @@
     require dirname(__DIR__) . '/var/errMessage.php';
     session_start();
     
+    /* 검색 기능을 위한 작업 */
+    $category = $_GET['category'];
+    $search = $_GET['search'];
+    
     /* 로그인하지 않았다면 로그인 페이지로 이동 */
     if (!isset($_SESSION['userId'])) {
         errMessage("로그인을 먼저 해주세요.");
@@ -34,8 +38,12 @@
         $fieldName = $_GET['orderField'];
     }
     
+    /* 현재 url 저장 */
+    $present = basename( $_SERVER["PHP_SELF"])."?".$_SERVER["QUERY_STRING"];
+    $urlArr = explode("&", $present);
+    
     /* 게시글을 불러오기 위한 select 문 */
-    $sql = "SELECT * FROM board ORDER BY {$fieldName} {$order}";
+    $sql = "SELECT * FROM board WHERE {$category} LIKE '%{$search}%' ORDER BY {$fieldName} {$order}";
     
     $result = mysqli_query($con, $sql);
     
@@ -65,7 +73,8 @@
         function sortTable(fieldName) {
             var fieldName = fieldName;
             var order = "<?php echo $order;?>";
-            window.location.href = "http://localhost/cmskorea_board/php/boardList.php?orderField=" + fieldName + "&order=" + order;
+            //window.location.href = "http://localhost/cmskorea_board/php/boardList.php?orderField=" + fieldName + "&order=" + order;
+            window.location.href = "<?php echo $urlArr[0]."&".$urlArr[1] ?>" + "&orderField=" + fieldName + "&order=" + order;
         }
     </script>
 </head>
@@ -86,13 +95,13 @@
     <div class="col-sm-12 list-body">
         <!-- 검색 부분, 작성버튼 -->
         <div class=" board-upper">
-            <form class="col-sm-6" action="./searchList.php" method="get">
+            <form class="col-sm-6" action="" method="get">
                 <select class="selectbox" id="category" name="category">
                     <option value="writer">작성자</option>
                     <option value="title">제목</option>
                     <option value="insertTime">작성일자</option>
                 </select>
-                <input class="s-input" type="text" name="search" autocomplete="off" required>
+                <input class="s-input" type="text" name="search" autocomplete="off" required><?php $search; ?></input>
                 <input class="btn s-button" type="submit" value="검색">
             </form>
             <div>
