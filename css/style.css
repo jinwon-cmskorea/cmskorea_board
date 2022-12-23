@@ -27,6 +27,11 @@ input:invalid {
 	border: 3px solid red;
 }
 
+.signup-btn {
+	background-color: rgb(91, 155, 213);
+	color: #fff;
+}
+
 /* signup.html css 요소 */
 .fence {
 	border: 1px solid black;
