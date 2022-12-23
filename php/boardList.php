@@ -8,17 +8,26 @@
         errMessage("로그인을 먼저 해주세요.");
         echo "<script type=\"text/javascript\">document.location.href='../html/login.html';</script>";
     }
+    
     /* default 필드 네임 지정 */
     $fieldName = "no";
+    
+    /* 
+     * 어떤 정렬을 할것인지, 어떤 헤더필드에 적용할 것인지
+     * get으로 받아온 내용을 변수에 저장
+     */
     if (isset($_GET['order']) && $_GET['order']) {
         $order = $_GET['order'];
         if ($order == "DESC") {
             $order = "ASC";
+            $temp = "▲";
         } else {
             $order = "DESC";
+            $temp = "▼";
         }
     } else {
         $order = "DESC";
+        $temp = "▼";
     }
     
     if (isset($_GET['orderField']) && $_GET['orderField']) {
@@ -29,6 +38,16 @@
     $sql = "SELECT * FROM board ORDER BY {$fieldName} {$order}";
     
     $result = mysqli_query($con, $sql);
+    
+    echo "
+        <script type=\"text/javascript\">
+            document.addEventListener(\"DOMContentLoaded\", function(){
+                var element = document.getElementById(\"{$fieldName}\");
+                var fieldText = element.innerText + ' '  + \"{$temp}\";
+                element.innerText = fieldText;
+            });
+        </script>
+    ";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,6 +60,8 @@
     <script src="../bootstrap-3.3.2-dist/js/bootstrap.js" type="javascript"></script>
     <title>게시글 리스트</title>
     <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(){
+        });
         function sortTable(fieldName) {
             var fieldName = fieldName;
             var order = "<?php echo $order;?>";
@@ -83,10 +104,10 @@
         <table class="table table-hover">
             <thead class="add-top-line">
                 <tr>
-                    <th class="col-sm-1" onclick="sortTable('no')" style="cursor: pointer;">번호 <?php echo $temp; ?></th>
-                    <th class="col-sm-7" onclick="sortTable('title')" style="text-align: center; cursor: pointer;">제목</th>
-                    <th class="col-sm-1" onclick="sortTable('writer')" style="cursor: pointer;">작성자</th>
-                    <th class="col-sm-1" onclick="sortTable('insertTime')" style="cursor: pointer;">작성일자</th>
+                    <th class="col-sm-1" id="no" onclick="sortTable('no')" style="cursor: pointer;">번호</th>
+                    <th class="col-sm-7" id="title" onclick="sortTable('title')" style="text-align: center; cursor: pointer;">제목</th>
+                    <th class="col-sm-1" id="writer" onclick="sortTable('writer')" style="cursor: pointer;">작성자</th>
+                    <th class="col-sm-1" id="insertTime" onclick="sortTable('insertTime')" style="cursor: pointer;">작성일자</th>
                     <th class="col-sm-2" style="text-align: center;">작업</th>
                 </tr>
             </thead>
