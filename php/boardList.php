@@ -10,6 +10,15 @@
     }
     
     /*
+     * 검색 관련 코드(검색 눌렀을 경우 작동)
+     * 검색값이 존재하면 변수 저장
+     */
+    if (isset($_GET['category']) && $_GET['category'] && isset($_GET['search']) && $_GET['search']) {
+        $category = $_GET['category'];
+        $search = $_GET['search'];
+    }
+    
+    /*
      * 페이징 관련 코드
      * 1. 레코드 갯수 확인
      */
@@ -18,9 +27,16 @@
     } else {
         $page = 1;
     }
-    $pageSql = "SELECT * FROM board";
-    $pageRes = mysqli_query($con, $pageSql);
-    $totalRow = mysqli_num_rows($pageRes);
+    
+    if (isset($category) && isset($search)) {
+        $pageSql = "SELECT * FROM board WHERE {$category} LIKE '%{$search}%'";
+        $pageRes = mysqli_query($con, $pageSql);
+        $totalRow = mysqli_num_rows($pageRes);
+    } else {
+        $pageSql = "SELECT * FROM board";
+        $pageRes = mysqli_query($con, $pageSql);
+        $totalRow = mysqli_num_rows($pageRes);
+    }
     
     /* 2. 페이징 계산 */
     $per = 10;
@@ -50,11 +66,26 @@
         $fieldName = $_GET['orderField'];
     }
     
-    /* 게시글을 불러오기 위한 select 문 */
-    $sql = "SELECT * FROM board ORDER BY {$fieldName} {$order} LIMIT {$start}, {$per}";
+    /* 현재 url 저장 */
+    $present = basename( $_SERVER["PHP_SELF"])."?".$_SERVER["QUERY_STRING"];
+    $urlArr = explode("&", $present);
+    
+    /* 
+     * 게시글을 불러오기 위한 select 문
+     * 검색 유무에 따라 다른 sql 실행
+     */
+    if (isset($category) && isset($search)) {
+        $sql = "SELECT * FROM board WHERE {$category} LIKE '%{$search}%' ORDER BY {$fieldName} {$order} LIMIT {$start}, {$per}";
+    } else {
+        $sql = "SELECT * FROM board ORDER BY {$fieldName} {$order} LIMIT {$start}, {$per}";
+    }
     
     $result = mysqli_query($con, $sql);
     
+    /*
+     * 어떤 정렬을 할것인지, 어떤 헤더필드에 적용할 것인지
+     * 테이블 헤더 눌렀을 경우, 해당 요소의 내용 변경
+     */
     echo "
         <script type=\"text/javascript\">
             document.addEventListener(\"DOMContentLoaded\", function(){
@@ -81,7 +112,11 @@
         function sortTable(fieldName) {
             var fieldName = fieldName;
             var order = "<?php echo $order == "DESC" ? "ASC" : "DESC";?>";
-            window.location.href = "http://localhost/cmskorea_board/php/boardList.php?page=<?php echo $page;?>&orderField=" + fieldName + "&order=" + order;
+            <?php if (isset($_GET['category']) && isset($_GET['search'])) { ?>
+                window.location.href = "<?php echo $urlArr[0]."&".$urlArr[1]."&".$urlArr[2]; ?>" + "&orderField=" + fieldName + "&order=" + order;
+            <?php } else { ?>
+                window.location.href = "http://localhost/cmskorea_board/php/boardList.php?page=<?php echo $page;?>&orderField=" + fieldName + "&order=" + order;
+            <?php }?>
         }
     </script>
 </head>
@@ -102,14 +137,15 @@
     <div class="col-sm-12 list-body">
         <!-- 검색 부분, 작성버튼 -->
         <div class=" board-upper">
-            <form class="col-sm-6" action="./searchList.php" method="get">
+            <form class="col-sm-6" action="./boardList.php" method="get">
+            	<input type="hidden" name="page" value="<?php echo $page;?>" />
                 <select class="selectbox" id="category" name="category">
                     <option value="writer">작성자</option>
                     <option value="title">제목</option>
                     <option value="insertTime">작성일자</option>
                 </select>
-                <input type="hidden" name="page_hidden" value="<?php echo $page;?>" />
                 <input class="s-input" type="text" name="search" autocomplete="off" required>
+                <!-- <input type="hidden" name="page_hidden" value="<?php echo $page;?>" /> -->
                 <input class="btn s-button" type="submit" value="검색">
             </form>
             <div>
@@ -178,11 +214,22 @@
                     $pageNum = 1;
                     
                     while ($pageNum <= $totalPage) {
-                        if ($page == $pageNum) {
-                            echo "<li class=\"active\"><a href=\"boardList.php?page={$pageNum}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
-                        } else {
-                            echo "<li><a href=\"boardList.php?page={$pageNum}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
-                        }
+//                         if ($page == $pageNum) {
+//                             echo "<li class=\"active\"><a href=\"boardList.php?page={$pageNum}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
+//                         } else {
+//                             echo "<li><a href=\"boardList.php?page={$pageNum}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
+//                         }
+                            if (isset($category) && isset($search)) {
+                                $urlStr = basename($_SERVER[ "PHP_SELF" ])."?page={$pageNum}&category={$category}&search={$search}";
+                            } else {
+                                $urlStr = basename($_SERVER[ "PHP_SELF" ])."?page={$pageNum}";
+                            }
+                            
+                            if ($page == $pageNum) {
+                                echo "<li class=\"active\"><a href=\"{$urlStr}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
+                            } else {
+                                echo "<li><a href=\"{$urlStr}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
+                            }
                         $pageNum++;
                     }
                     
