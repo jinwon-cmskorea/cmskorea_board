@@ -28,15 +28,13 @@
         $page = 1;
     }
     
-    if (isset($category) && isset($search)) {
+    if (isset($category) && isset($search) && $category && $search) {
         $pageSql = "SELECT * FROM board WHERE {$category} LIKE '%{$search}%'";
-        $pageRes = mysqli_query($con, $pageSql);
-        $totalRow = mysqli_num_rows($pageRes);
     } else {
         $pageSql = "SELECT * FROM board";
-        $pageRes = mysqli_query($con, $pageSql);
-        $totalRow = mysqli_num_rows($pageRes);
     }
+    $pageRes = mysqli_query($con, $pageSql);
+    $totalRow = mysqli_num_rows($pageRes);
     
     /* 2. 페이징 계산 */
     $per = 10;
@@ -112,7 +110,7 @@
         function sortTable(fieldName) {
             var fieldName = fieldName;
             var order = "<?php echo $order == "DESC" ? "ASC" : "DESC";?>";
-            <?php if (isset($_GET['category']) && isset($_GET['search'])) { ?>
+            <?php if (isset($category) && isset($search)) { ?>
                 window.location.href = "<?php echo $urlArr[0]."&".$urlArr[1]."&".$urlArr[2]; ?>" + "&orderField=" + fieldName + "&order=" + order;
             <?php } else { ?>
                 window.location.href = "http://localhost/cmskorea_board/php/boardList.php?page=<?php echo $page;?>&orderField=" + fieldName + "&order=" + order;
@@ -138,14 +136,13 @@
         <!-- 검색 부분, 작성버튼 -->
         <div class=" board-upper">
             <form class="col-sm-6" action="./boardList.php" method="get">
-            	<input type="hidden" name="page" value="<?php echo $page;?>" />
+                <input type="hidden" name="page" value="1" />
                 <select class="selectbox" id="category" name="category">
-                    <option value="writer">작성자</option>
-                    <option value="title">제목</option>
-                    <option value="insertTime">작성일자</option>
+                    <option value="writer" <?php echo (isset($category) && $category == 'writer') ? 'selected' : ''; ?>>작성자</option>
+                    <option value="title" <?php echo (isset($category) && $category == 'title') ? 'selected' : ''; ?>>제목</option>
+                    <option value="insertTime" <?php echo (isset($category) && $category == 'insertTime') ? 'selected' : ''; ?>>작성일자</option>
                 </select>
-                <input class="s-input" type="text" name="search" autocomplete="off" required>
-                <!-- <input type="hidden" name="page_hidden" value="<?php echo $page;?>" /> -->
+                <input class="s-input" type="text" name="search" autocomplete="off" value="<?php echo (isset($search) && $search) ? $search : ''; ?>">
                 <input class="btn s-button" type="submit" value="검색">
             </form>
             <div>
@@ -192,14 +189,25 @@
         <div class="text-center">
             <ul class="pagination page-center">
                 <?php 
+                    /* 가장 최근에 작성된 페이지로 이동하기 */
                     if ($page > 1) {
-                        echo "
-                            <li>
-                                <a href=\"boardList.php?page=1&orderField={$fieldName}&order={$order}\" aria-label=\"Previous\">
-                                    <span aria-hidden=\"true\">&laquo;</span>
-                                </a>
-                            </li>
-                        ";
+                        if (isset($category) && isset($search)) {
+                            echo "
+                                <li>
+                                    <a href=\"boardList.php?page=1&category={$category}&search={$search}&orderField={$fieldName}&order={$order}\" aria-label=\"Previous\">
+                                        <span aria-hidden=\"true\">&laquo;</span>
+                                    </a>
+                                </li>
+                            ";
+                        } else {
+                            echo "
+                                <li>
+                                    <a href=\"boardList.php?page=1&orderField={$fieldName}&order={$order}\" aria-label=\"Previous\">
+                                        <span aria-hidden=\"true\">&laquo;</span>
+                                    </a>
+                                </li>
+                            ";
+                        }
                     } else {
                         echo "
                             <li class=\"disabled\">
@@ -214,11 +222,6 @@
                     $pageNum = 1;
                     
                     while ($pageNum <= $totalPage) {
-//                         if ($page == $pageNum) {
-//                             echo "<li class=\"active\"><a href=\"boardList.php?page={$pageNum}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
-//                         } else {
-//                             echo "<li><a href=\"boardList.php?page={$pageNum}&orderField={$fieldName}&order={$order}\">$pageNum</a></li>";
-//                         }
                             if (isset($category) && isset($search)) {
                                 $urlStr = basename($_SERVER[ "PHP_SELF" ])."?page={$pageNum}&category={$category}&search={$search}";
                             } else {
@@ -233,14 +236,25 @@
                         $pageNum++;
                     }
                     
+                    /* 가장 처음 작성된 페이지로 이동 */
                     if($page < $totalPage) {
-                        echo "
-                            <li>
-                                <a href=\"boardList.php?page={$totalPage}&orderField={$fieldName}&order={$order}\" aria-label=\"next\">
-                                    <span aria-hidden=\"true\">&raquo;</span>
-                                </a>
-                            </li>
-                        ";
+                        if (isset($category) && isset($search)) {
+                            echo "
+                                <li>
+                                    <a href=\"boardList.php?page={$totalPage}&category={$category}&search={$search}&orderField={$fieldName}&order={$order}\" aria-label=\"Previous\">
+                                        <span aria-hidden=\"true\">&raquo;</span>
+                                    </a>
+                                </li>
+                            ";
+                        } else {
+                            echo "
+                                <li>
+                                    <a href=\"boardList.php?page={$totalPage}&orderField={$fieldName}&order={$order}\" aria-label=\"next\">
+                                        <span aria-hidden=\"true\">&raquo;</span>
+                                    </a>
+                                </li>
+                            ";
+                        }
                     } else {
                         echo "
                             <li class=\"disabled\">
