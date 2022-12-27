@@ -218,3 +218,21 @@ input:invalid {
 	padding-bottom: 15px;
 	font-size: large;
 }
+
+/* writeBoard.php 요소 */
+.control-label-center {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    text-align: center;
+    background-color: rgb(191, 191, 191);
+    color: white;
+}
+
+.write-btn-style {
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.space-form {
+	margin-left: 15px;
+}
