@@ -102,11 +102,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../bootstrap-3.3.2-dist/css/bootstrap.css" type="text/css">
     <link rel="stylesheet" href="../css/style.css" type="text/css">
+    <script src="../jQuery/jquery-3.6.3.min.js" type="text/javascript"></script>
     <script src="../bootstrap-3.3.2-dist/js/bootstrap.js" type="javascript"></script>
     <title>게시글 리스트</title>
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function(){
         });
+        $(document).ready(function() {
+            $(document).on('click', '.btn-delete', function(){
+                var no = $(this).data('no');//data-no 의 값을 저장
+                
+                if (confirm("게시글을 삭제하시겠습니까?")) {
+                    $.ajax ({
+                        url: "./deleteBoard.php",
+                        method: "POST",
+                        data: {"no":no},//자바 스크립트 객체 형태로 전달
+                        dataType: "json",
+                        success: function(receive) {
+                            if (receive.status == 1) {//php로부터 json을 받아오고, 조건문에 따라 비교
+                                alert("게시글이 삭제되었습니다.");
+                                window.location.reload();
+                            } else {
+                                alert("삭제 중 문제가 발생했습니다.");
+                           	}
+                        },
+                        error: function() {
+                            alert("삭제 중 문제가 발생했습니다.");
+                        }
+                    });
+                }
+            });
+        });
+        
         function sortTable(fieldName) {
             var fieldName = fieldName;
             var order = "<?php echo $order == "DESC" ? "ASC" : "DESC";?>";
@@ -175,7 +202,7 @@
                     <td>
                         <div style="text-align: center;">
                             <input class="btn view-btn" type="button" value="조회">
-                            <input class="btn del-btn" type="button" value="삭제">
+                            <input class="btn del-btn btn-delete" name="delete-btn" type="button" value="삭제" data-no="<?php echo $row['no']; ?>">
                         </div>
                     </td>
                 </tr>
