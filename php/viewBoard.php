@@ -30,6 +30,25 @@
         <link rel="stylesheet" href="../css/style.css" type="text/css">
         <script src="../bootstrap-3.3.2-dist/js/bootstrap.js" type="javascript"></script>
         <title>게시글 조회</title>
+        <script type="text/javascript">
+            /*
+                게시글 수정 후 alert 띄우기
+                이후 message 파라미터 지우기(계속 alert 뜨는 것을 방지하기 위해서)
+            */
+            window.onload = function(){
+                const urlStr = window.location.href;//현재 페이지 url 얻기
+                const url = new URL(urlStr);
+                
+                const urlParams = url.searchParams;//얻어온 url의 파라미터들 획득
+                const tag = urlParams.get('message');//파라미터의 특정 값 획득. 여기선 succes 획득
+                
+                if (tag == "edit") {
+                    alert("게시글이 수정되었습니다.");
+                    var no = <?php echo $row['no']; ?>;//게시글 no 저장
+                    history.replaceState({}, "", location.pathname + "?no=" + no); //정규 주소 및 no 파라미터를 제외하고 get 파라미터 제거
+                }
+            }
+        </script>
     </head>
     <body>
         <?php include_once dirname(__DIR__) . '/html/commonHeader.html';?>
