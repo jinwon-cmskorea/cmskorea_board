@@ -29,7 +29,7 @@
         <link rel="stylesheet" href="../bootstrap-3.3.2-dist/css/bootstrap.css" type="text/css">
         <link rel="stylesheet" href="../css/style.css" type="text/css">
         <script src="../bootstrap-3.3.2-dist/js/bootstrap.js" type="javascript"></script>
-        <title>게시글 리스트</title>
+        <title>게시글 조회</title>
     </head>
     <body>
         <?php include_once dirname(__DIR__) . '/html/commonHeader.html';?>
@@ -57,7 +57,7 @@
                 <?php echo nl2br($row['content']); ?>
             </div>
             <div class="col-sm-12">
-                <input type="submit" class="btn btn-warning col-sm-6 write-btn-style" value="수   정">
+                <input type="submit" class="btn btn-warning col-sm-6 write-btn-style" onclick="location.href='./editBoard.php?no=<?php echo $row['no']; ?>';" value="수   정">
                 <input type="button" class="btn list-btn col-sm-6 write-btn-style" onclick="location.href='./boardList.php';" value="리스트">
             </div>
         </div>

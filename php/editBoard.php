@@ -1,6 +1,6 @@
 <?php 
     /***
-     * @brief 게시글 작성 php
+     * @brief 게시글 수정 php
      */
     require dirname(__DIR__) . '/dbCon.php';
     require dirname(__DIR__) . '/var/errMessage.php';
@@ -10,6 +10,18 @@
     if (!isset($_SESSION['userId'])) {
         errMessage("로그인을 먼저 해주세요.");
         echo "<script type=\"text/javascript\">document.location.href='../html/login.html';</script>";
+    }
+    
+    if (isset($_GET['no']) && $_GET['no']) {
+        $no = $_GET['no'];
+    }
+    
+    $sql = "SELECT * FROM board WHERE no={$no}";
+    $result = mysqli_query($con, $sql);
+    if ($result) {
+        $row = mysqli_fetch_array($result);
+    } else {
+        echo "수정 중 문제가 발생했습니다." . mysqli_error($con);
     }
 ?>
 <!DOCTYPE html>
@@ -21,7 +33,7 @@
         <link rel="stylesheet" href="../bootstrap-3.3.2-dist/css/bootstrap.css" type="text/css">
         <link rel="stylesheet" href="../css/style.css" type="text/css">
         <script src="../bootstrap-3.3.2-dist/js/bootstrap.js" type="javascript"></script>
-        <title>게시글 작성</title>
+        <title>게시글 수정</title>
     </head>
     <body>
         <?php include_once dirname(__DIR__) . '/html/commonHeader.html';?>
@@ -29,37 +41,38 @@
         <div class="col-sm-12">
             <div class="list-title">
                 <strong>씨엠에스코리아 게시판</strong>
-                <small class="small-ele">- 작성 -</small>
+                <small class="small-ele">- 수정 -</small>
             </div>
             <div class="col-sm-12 list-descript">
-                게시판 글을 작성합니다.
+                게시판 글을 수정합니다.
             </div>
         </div>
         <!-- 상단 설명 끝 -->
         <!-- 게시글 내용 작성 -->
         <div class="col-sm-10 col-sm-offset-1 list-body">
-            <form class="form-horizontal" action="./writeBoardOk.php" method="post">
+            <form class="form-horizontal" action="./editBoardOk.php" method="post">
                 <div class="form-group">
                     <label for="inputTitle" class="col-sm-1 control-label-center">제   목</label>
                     <div class="col-sm-11">
-                        <input type="text" class="form-control space-form" id="inputTitle" name="title" required>
+                        <input type="text" class="form-control space-form" id="inputTitle" name="title" value="<?php echo $row['title']; ?>" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputContent" class="col-sm-1 control-label-center">내   용</label>
                     <div class="col-sm-11">
-                        <textarea class="form-control space-form" rows="10" id="inputContent" name="content" required></textarea>
+                        <textarea class="form-control space-form" rows="10" id="inputContent" name="content" required><?php echo $row['content']; ?></textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputWriter" class="col-sm-1 control-label-center">작성자</label>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control space-form" id="inputWriter" name="writer" required>
+                        <input type="text" class="form-control space-form" id="inputWriter" name="writer" value="<?php echo $row['writer']; ?>" required>
                     </div>
                 </div>
+                <input type="hidden" name="no" value="<?php echo $row['no']; ?>">
                 <div class="form-group">
-                    <input type="submit" class="btn bg-primary col-sm-6 write-btn-style" value="등   록">
-                    <input type="button" class="btn col-sm-6 cancle-btn write-btn-style" onclick="location.href='./boardList.php';" value="취소">
+                    <input type="submit" class="btn btn-warning col-sm-6 write-btn-style" value="수   정">
+                    <input type="button" class="btn col-sm-6 cancle-btn write-btn-style" onclick="history.back(-1)" value="취소">
                 </div>
             <form>
         </div>
