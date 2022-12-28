@@ -8,7 +8,7 @@
     
     /* 로그인하지 않았다면 로그인 페이지로 이동 */
     if (!isset($_SESSION['userId'])) {
-        errMessage("로그인을 먼저 해주세요.");
+        echo "<script type=\"text/javascript\">alert('로그인을 먼저 해주세요.');</script>";
         echo "<script type=\"text/javascript\">document.location.href='../html/login.html';</script>";
     }
 ?>

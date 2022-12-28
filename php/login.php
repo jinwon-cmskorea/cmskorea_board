@@ -5,8 +5,8 @@
      */
     session_start();
     
-    include dirname(__DIR__) . '/dbCon.php';
-    include dirname(__DIR__) . '/var/errMessage.php';
+    require dirname(__DIR__) . '/dbCon.php';
+    require dirname(__DIR__) . '/var/errMessage.php';
     
     $userId = $_POST['userId'];
     $userPw = $_POST['userPw'];
