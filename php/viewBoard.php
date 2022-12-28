@@ -19,6 +19,10 @@
     $sql = "SELECT * FROM board WHERE no={$no}";
     $result = mysqli_query($con, $sql);
     $row = mysqli_fetch_array($result);
+    
+    $escapedTitle = htmlspecialchars($row['title']);
+    $escapedContent = htmlspecialchars($row['content']);
+    $escapedWriter = htmlspecialchars($row['writer']);
 ?>
 <!DOCTYPE html>
     <html lang="en">
@@ -66,14 +70,14 @@
         <!-- 게시글 조회 작성 -->
         <div class="view-box">
             <div class="page-header-custom">
-                    <?php echo $row['title']; ?>
+                    <?php echo $escapedTitle; ?>
                     <div class="info">
-                        <small class="space writer-info"><?php echo $row['writer'];?></small>
-                        <small class="space"><?php echo $row['insertTime'];?></small>
+                        <small class="space writer-info"><?php echo $escapedWriter; ?></small>
+                        <small class="space"><?php echo $row['insertTime']; ?></small>
                     </div>
             </div>
             <div class="col-sm-12 text-box">
-                <?php echo nl2br($row['content']); ?>
+                <?php echo nl2br($escapedContent); ?>
             </div>
             <div class="col-sm-12">
                 <input type="submit" class="btn btn-warning col-sm-6 write-btn-style" onclick="location.href='./editBoard.php?no=<?php echo $row['no']; ?>';" value="수   정">

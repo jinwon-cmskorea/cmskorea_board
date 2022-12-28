@@ -208,11 +208,15 @@
                     /*  */
                     while ($row = mysqli_fetch_array($result)) {
                         $ymd = substr($row['insertTime'], 0, 10);
+                        
+                        /* 입력된 내용 필터링 */
+                        $escapedTitle = htmlspecialchars($row['title']);
+                        $escapedWriter = htmlspecialchars($row['writer']);
                 ?>
                 <tr>
                     <td><?php echo $row['no']; ?></td>
-                    <td><?php echo $row['title']; ?></td>
-                    <td><?php echo $row['writer']; ?></td>
+                    <td><?php echo $escapedTitle; ?></td>
+                    <td><?php echo $escapedWriter; ?></td>
                     <td><?php echo $ymd; ?></td>
                     <td>
                         <div style="text-align: center;">
