@@ -38,7 +38,7 @@
         <!-- 상단 설명 끝 -->
         <!-- 게시글 내용 작성 -->
         <div class="col-sm-10 col-sm-offset-1 list-body">
-            <form class="form-horizontal" action="" method="post">
+            <form class="form-horizontal" action="./writeBoardOk.php" method="post">
                 <div class="form-group">
                     <label for="inputTitle" class="col-sm-1 control-label-center">제   목</label>
                     <div class="col-sm-11">
@@ -52,9 +52,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="inputName" class="col-sm-1 control-label-center">작성자</label>
+                    <label for="inputWriter" class="col-sm-1 control-label-center">작성자</label>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control space-form" id="inputName" name="name" required>
+                        <input type="text" class="form-control space-form" id="inputWriter" name="writer" required>
                     </div>
                 </div>
                 <div class="form-group">

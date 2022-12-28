@@ -106,8 +106,23 @@
     <script src="../bootstrap-3.3.2-dist/js/bootstrap.js" type="javascript"></script>
     <title>게시글 리스트</title>
     <script type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function(){
-        });
+        /*
+            게시글 생성 후 alert 띄우기
+            이후 get 파라미터들 지우기(계속 alert 뜨는 것을 방지하기 위해서)
+        */
+        window.onload = function(){
+            const urlStr = window.location.href;//현재 페이지 url 얻기
+            const url = new URL(urlStr);
+            
+            const urlParams = url.searchParams;//얻어온 url의 파라미터들 획득
+            const tag = urlParams.get('message');//파라미터의 특정 값 획득. 여기선 succes 획득
+            
+            if (tag == "success") {
+                alert("게시글이 생성되었습니다.");
+                history.replaceState({}, null, location.pathname); //정규 주소 빼고 파라미터들 삭제
+            }
+        }
+        
         $(document).ready(function() {
             $(document).on('click', '.btn-delete', function(){
                 var no = $(this).data('no');//data-no 의 값을 저장
