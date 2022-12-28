@@ -9,7 +9,8 @@
     require dirname(__DIR__) . '/var/errMessage.php';
     
     if (!isset($_SESSION['userId'])) {
-        errMessage("로그인을 먼저 해주세요.");
+        echo "<script type=\"text/javascript\">alert('로그인을 먼저 해주세요.');</script>";
+        echo "<script type=\"text/javascript\">document.location.href='../html/login.html';</script>";
     } else if (!$_POST['title'] || !$_POST['content'] || !$_POST['writer']) { 
         errMessage("제목, 내용, 작성자 모두 입력해주세요.");
     } else {

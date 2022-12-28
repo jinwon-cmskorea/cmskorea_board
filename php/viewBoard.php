@@ -40,7 +40,7 @@
                 const url = new URL(urlStr);
                 
                 const urlParams = url.searchParams;//얻어온 url의 파라미터들 획득
-                const tag = urlParams.get('message');//파라미터의 특정 값 획득. 여기선 succes 획득
+                const tag = urlParams.get('message');//파라미터의 특정 값 획득. 여기선 edit 획득
                 
                 if (tag == "edit") {
                     alert("게시글이 수정되었습니다.");
