@@ -216,7 +216,7 @@
                     <td><?php echo $ymd; ?></td>
                     <td>
                         <div style="text-align: center;">
-                            <input class="btn view-btn" type="button" value="조회">
+                            <input class="btn view-btn" type="button" onclick="location.href='./viewBoard.php?no=<?php echo $row['no']; ?>';" value="조회">
                             <input class="btn del-btn btn-delete" name="delete-btn" type="button" value="삭제" data-no="<?php echo $row['no']; ?>">
                         </div>
                     </td>
