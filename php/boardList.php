@@ -65,7 +65,7 @@
     }
     
     /* 현재 url 저장 */
-    $present = basename( $_SERVER["PHP_SELF"])."?".$_SERVER["QUERY_STRING"];
+    $present = basename($_SERVER["PHP_SELF"])."?".$_SERVER["QUERY_STRING"];
     $urlArr = explode("&", $present);
     
     /* 

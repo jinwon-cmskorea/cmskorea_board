@@ -5,10 +5,10 @@
     require dirname(__DIR__) . '/var/errMessage.php';
 
     
-    if (isset($_POST['no']) && $_POST['no'])
-        $no = $_POST['no'];
-    
-    $sql = "DELETE FROM board WHERE no={$no}";
+    if (isset($_POST['no']) && $_POST['no']) {
+        $fNo = mysqli_real_escape_string($con, $_POST['no']);
+    }
+    $sql = "DELETE FROM board WHERE no='{$fNo}'";
 
     $result = mysqli_query($con, $sql);
     if ($result) {
