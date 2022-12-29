@@ -70,7 +70,7 @@
                 <div class="form-group">
                     <label for="inputWriter" class="col-sm-1 control-label-center">작성자</label>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control space-form" id="inputWriter" name="writer" value="<?php echo $escapedWriter; ?>" required>
+                        <input type="text" class="form-control space-form" id="inputWriter" name="writer" pattern="[가-힣]+" title="한글 이름만 가능합니다." value="<?php echo $escapedWriter; ?>" required>
                     </div>
                 </div>
                 <input type="hidden" name="no" value="<?php echo $row['no']; ?>">

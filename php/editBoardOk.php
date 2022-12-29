@@ -13,6 +13,8 @@
         echo "<script type=\"text/javascript\">document.location.href='./login.php';</script>";
     } else if (!$_POST['title'] || !$_POST['content'] || !$_POST['writer']) { 
         errMessage("제목, 내용, 작성자 모두 입력해주세요.");
+    } else if (!preg_match("/^[가-힣]{9,}$/", $_POST['writer'])) {
+        errMessage("이름은 한글만 입력해주세요.");
     } else {
         $fTitle = mysqli_real_escape_string($con, $_POST['title']);
         $fContent = mysqli_real_escape_string($con, $_POST['content']);
