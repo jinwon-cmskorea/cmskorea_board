@@ -20,6 +20,10 @@
     $result = mysqli_query($con, $sql);
     if ($result) {
         $row = mysqli_fetch_array($result);
+        
+        $escapedTitle = htmlspecialchars($row['title']);
+        $escapedContent = htmlspecialchars($row['content']);
+        $escapedWriter = htmlspecialchars($row['writer']);
     } else {
         echo "수정 중 문제가 발생했습니다." . mysqli_error($con);
     }
@@ -54,19 +58,19 @@
                 <div class="form-group">
                     <label for="inputTitle" class="col-sm-1 control-label-center">제   목</label>
                     <div class="col-sm-11">
-                        <input type="text" class="form-control space-form" id="inputTitle" name="title" value="<?php echo $row['title']; ?>" required>
+                        <input type="text" class="form-control space-form" id="inputTitle" name="title" value="<?php echo $escapedTitle; ?>" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputContent" class="col-sm-1 control-label-center">내   용</label>
                     <div class="col-sm-11">
-                        <textarea class="form-control space-form" rows="10" id="inputContent" name="content" required><?php echo $row['content']; ?></textarea>
+                        <textarea class="form-control space-form" rows="10" id="inputContent" name="content" required><?php echo $escapedContent; ?></textarea>
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="inputWriter" class="col-sm-1 control-label-center">작성자</label>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control space-form" id="inputWriter" name="writer" value="<?php echo $row['writer']; ?>" required>
+                        <input type="text" class="form-control space-form" id="inputWriter" name="writer" value="<?php echo $escapedWriter; ?>" required>
                     </div>
                 </div>
                 <input type="hidden" name="no" value="<?php echo $row['no']; ?>">
