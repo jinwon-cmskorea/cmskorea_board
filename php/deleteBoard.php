@@ -1,6 +1,8 @@
 <?php 
     header("Content-Type: application/json");//json 을 사용하기 위해 필요한 구문
-
+    
+    session_start();
+    
     require dirname(__DIR__) . '/dbCon.php';
     require dirname(__DIR__) . '/var/errMessage.php';
     
