@@ -34,7 +34,7 @@
     } else if (!preg_match("/^[a-zA-Z0-9]+$/", $userId) | !preg_match("/^[a-zA-Z0-9]+$/", $userPw)) {
         errMessage("아이디 또는 비밀번호 형식을 지켜주세요.");
         $isCheck = !$isCheck;
-    } else if (!preg_match("/^[가-힣]{9,}$/", $userName)) {
+    } else if (!preg_match("/^[가-힣]{3,}$/", $userName)) {
         errMessage("이름은 한글만 입력해주세요.");
         $isCheck = !$isCheck;
     } else if (!preg_match($phonePattern, $userPhone)) {
