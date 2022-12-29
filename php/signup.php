@@ -77,6 +77,6 @@
             errMessage("회원가입 중 에러가 발생했습니다. 관리자에게 문의하십시오.");
         } else {
             echo "<script type=\"text/javascript\">alert('회원가입이 완료되었습니다!');</script>";
-            echo "<script type=\"text/javascript\">document.location.href='../html/login.html';</script>";
+            echo "<script type=\"text/javascript\">document.location.href='./login.php';</script>";
         }
     }
