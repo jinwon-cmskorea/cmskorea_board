@@ -155,7 +155,7 @@
             <?php if (isset($category) && isset($search)) { ?>
                 window.location.href = "<?php echo $urlArr[0]."&".$urlArr[1]."&".$urlArr[2]; ?>" + "&orderField=" + fieldName + "&order=" + order;
             <?php } else { ?>
-                window.location.href = "http://localhost/cmskorea_board/php/boardList.php?page=<?php echo $page;?>&orderField=" + fieldName + "&order=" + order;
+                window.location.href = "./boardList.php?page=<?php echo $page;?>&orderField=" + fieldName + "&order=" + order;
             <?php }?>
         }
     </script>
