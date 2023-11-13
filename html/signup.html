@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="../jQuery/jquery-3.6.3.min.js"></script>
+        <link href="../bootstrap-5.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../bootstrap-5.3.1-dist/js/bootstrap.min.js"></script>
+        <style type="text/css">
+            .centerbox{
+                width: 500px;
+                height: 500px;
+                margin:auto;
+                padding: 30px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .namebox{
+                width: 20%;
+                height: 50px;
+                margin-right: 40px;
+                text-align: center;
+                align-items: center;
+                line-height: 50px;
+            }
+        </style>
+        <title>회원가입 페이지</title>
+    </head>
+    <body>
+        <div class="container">
+            <div  class="text-center centerbox border border-2 border-dark">
+                <div class=" text-start">
+                    <span style="color: #595959; font-weight:bold">씨엠에스코리아 게시판</span>
+                    <span class="text-primary text-opacity-75" style="font-size: small; font-weight:bold">- 회원가입 -</span>
+                </div>
+                <br/>
+                <div class="text-start grid gap-3">
+                    <div class="row p-2 g-col-6">
+                        <span class="col-3 align-self-center bg-success text-light namebox">아이디</span>
+                        <input  type="text" class="col-8 form-control-lg rounded-0">
+                    </div>
+                    <div class="row p-2 g-col-6 ">
+                        <span class="col-3 align-self-center bg-success text-light namebox">비밀번호</span>
+                        <input  type="text" class="col-8 form-control-lg rounded-0">
+                    </div>
+                    <div class="row p-2 g-col-6 ">
+                        <span class="col-3 align-self-center bg-success text-light namebox">이름</span>
+                        <input  type="text" class="col-8 form-control-lg rounded-0">
+                    </div>
+                    <div class="row p-2 g-col-6">
+                        <span class="col-3 align-self-center bg-success text-light namebox">휴대전화</span>
+                        <input  type="text" class="col-8 form-control-lg rounded-0">
+                    </div>
+                    <div class="row justify-content-end "  style="margin-top: 50px;">
+                        <div class="col-5 "></div>
+                        <button class="btn btn-warning text-light col-2 rounded-0" style="margin-right: 20px;">가입</button>
+                        <button class="btn btn-secondary col-2 rounded-0 border border-2 border-dark" style="margin-right: 40px;">취소</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
