@@ -27,28 +27,37 @@
                     <hr/>
                     <p class="text-secondary ">아이디 / 비밀번호를 입력하여 주세요.</p>
                 </div>
-                <div>
+                <form method="post" action="../php/login.php" id="loginForm">
                     <div class="text-start grid gap-3">
                         <div class="row p-2 g-col-6">
                             <span class="col-3 align-self-center ">아이디</span>
-                            <input  type="text" class="col-8 form-control border-dark-subtle rounded-0" style="width: 70%;">
+                            <input  type="text" class="col-8 form-control border-dark-subtle rounded-0" style="width: 70%;" id="name" name="name">
                         </div>
                         <div class="row p-2 g-col-6">
                             <span class="col-3 align-self-center">비밀번호</span>
-                            <input  type="text" class="col-8 form-control border-dark-subtle rounded-0"  style="width: 70%;">
+                            <input  type="text" class="col-8 form-control border-dark-subtle rounded-0"  style="width: 70%;" id="password" name="password">
                         </div>
                     </div>
                     <div class="d-grid gap-2 p-2 g-col-6">
-                        <button class="btn btn-primary btn-lg rounded-0">로그인</button>
+                        <button class="btn btn-primary btn-lg rounded-0" id="loginButton">로그인</button>
                     </div>
                     <div class="row justify-content-end">
                             <div class="col-5">
                             </div>
-                        <button class="btn btn-primary  col-2 p-2 g-col-6 rounded-0" style="margin-right: 20px;">회원가입</button>
+                        <button type="button" class="btn btn-primary  col-2 p-2 g-col-6 rounded-0" style="margin-right: 20px;" id="signupHTML" >회원가입</button>
                     </div>
-                    
-                </div>
+                </form>
             </div>
         </div>
+        <script>
+            $(document).ready(function(){
+                //$("#loginForm").submit(function(){
+                //   location.href = 'board/boardlist.html'; 
+                //});
+                $(document).on('click', '#signupHTML',function(){
+                   location.href = 'signup.html'; 
+                });
+            });
+        </script>
     </body>
 </html>

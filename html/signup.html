@@ -16,7 +16,7 @@
                 left: 50%;
                 transform: translate(-50%, -50%);
             }
-            .namebox{
+            .inputbox{
                 width: 20%;
                 height: 50px;
                 margin-right: 40px;
@@ -31,34 +31,62 @@
         <div class="container">
             <div  class="text-center centerbox border border-2 border-dark">
                 <div class=" text-start">
-                    <span style="color: #595959; font-weight:bold">씨엠에스코리아 게시판</span>
+                    <span class="fs-5" style="color: #595959; font-weight:bold ">씨엠에스코리아 게시판</span>
                     <span class="text-primary text-opacity-75" style="font-size: small; font-weight:bold">- 회원가입 -</span>
                 </div>
                 <br/>
-                <div class="text-start grid gap-3">
+                <div class="text-start grid gap-3" id="signupForm">
                     <div class="row p-2 g-col-6">
-                        <span class="col-3 align-self-center bg-success text-light namebox">아이디</span>
-                        <input  type="text" class="col-8 form-control-lg rounded-0">
+                        <span class="col-3 align-self-center bg-success text-white inputbox">아이디</span>
+                        <input  type="text" class="col-8 form-control-lg rounded-0" id="memberId">
                     </div>
                     <div class="row p-2 g-col-6 ">
-                        <span class="col-3 align-self-center bg-success text-light namebox">비밀번호</span>
-                        <input  type="text" class="col-8 form-control-lg rounded-0">
+                        <span class="col-3 align-self-center bg-success text-white inputbox">비밀번호</span>
+                        <input  type="password" class="col-8 form-control-lg rounded-0" id="memberPw">
                     </div>
                     <div class="row p-2 g-col-6 ">
-                        <span class="col-3 align-self-center bg-success text-light namebox">이름</span>
-                        <input  type="text" class="col-8 form-control-lg rounded-0">
+                        <span class="col-3 align-self-center bg-success text-white inputbox">이름</span>
+                        <input  type="text" class="col-8 form-control-lg rounded-0" id="memberName">
                     </div>
                     <div class="row p-2 g-col-6">
-                        <span class="col-3 align-self-center bg-success text-light namebox">휴대전화</span>
-                        <input  type="text" class="col-8 form-control-lg rounded-0">
+                        <span class="col-3 align-self-center bg-success text-white inputbox">휴대전화</span>
+                        <input  type="text" class="col-8 form-control-lg rounded-0" id="memberTel">
                     </div>
-                    <div class="row justify-content-end "  style="margin-top: 50px;">
-                        <div class="col-5 "></div>
-                        <button class="btn btn-warning text-light col-2 rounded-0" style="margin-right: 20px;">가입</button>
-                        <button class="btn btn-secondary col-2 rounded-0 border border-2 border-dark" style="margin-right: 40px;">취소</button>
-                    </div>
+                </div>
+                 <div class="row justify-content-end " style="margin-top: 50px;">
+                    <div class="col-5 "></div>
+                    <button type="button" class="btn btn-warning text-light col-2 rounded-0" style="margin-right: 20px;" id="signupButton">가입</button>
+                    <button class="btn btn-secondary col-2 rounded-0 border border-2 border-dark" style="margin-right: 40px;" id="backHTML">취소</button>
                 </div>
             </div>
         </div>
+        <script>
+            $(document).ready(function(){
+                //회원가입
+                $("#signupButton").on('click', function() {
+                        var memberId = $("#memberId").val();
+                        var memberPw = $("#memberPw").val();
+                        var memberName = $("#memberName").val();
+                        var memberTel = $("#memberTel").val();
+                        
+                        $.ajax({
+                        url : '../php/member.php',
+                        type : 'POST',
+                        data : {call_name:'insert_member', inputId:memberId, inputPw:memberPw, inputName:memberName, inputTel:memberTel},
+                        error : function(){
+                        console.log("실패");
+                        }, success : function(result){
+                            console.log("성공");
+                            location.href  = 'login.html';
+                            }
+                        });
+                });
+                
+                $(document).on('click', '#backHTML',function(){
+                   location.href = 'login.html'; 
+                });
+                
+            });
+        </script>
     </body>
 </html>
