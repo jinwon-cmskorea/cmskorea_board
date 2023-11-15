@@ -5,6 +5,28 @@
         <script type="text/javascript" src="../../jQuery/jquery-3.6.3.min.js"></script>
         <link href="../../bootstrap-5.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="../../bootstrap-5.3.1-dist/js/bootstrap.min.js"></script>
+        <style type="text/css">
+            .page-link {
+              color: #000; 
+              background-color: #fff;
+              border: 1px solid #ccc; 
+            }
+            
+            .page-item.active .page-link {
+             z-index: 1;
+             color: #555;
+             font-weight:bold;
+             background-color: #f1f1f1;
+             border-color: #ccc;
+             
+            }
+            
+            .page-link:focus, .page-link:hover {
+              color: #000;
+              background-color: #fafafa; 
+              border-color: #ccc;
+            }
+        </style>
         <title>리스트 페이지</title>
     </head>
     <body>
@@ -31,11 +53,11 @@
                                 <input  type="text" style="border: 1px solid lightgray;">
                                 <button class="btn btn-primary">검색</button>
                             </div>
-                            <button class="btn btn-primary col-1">작성</button>
+                            <button class="btn btn-primary col-1" id="boardWrite">작성</button>
                         </div>
                         <div>
                             
-                            <table class="table" style="border-top: 1px solid lightgray;">
+                            <table class="table" style="border-top: 1px solid lightgray;" id="boardTable" >
                                 <thead>
                                     <th class="col-1">번호</th>
                                     <th class="col-6 text-center">제목</th>
@@ -44,44 +66,20 @@
                                     <th class="col-2">작업</th>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <!--<tr>
                                       <th scope="row">1</th>
                                       <td>안녕하세요. 새로 가입한 홍길동입니다.</td>
                                       <td>홍길동</td>
                                       <td>2023-11-09</td>
                                       <td>
-                                          <button type="button" class="btn btn-warning text-white">조회</button>
-                                          <button type="button" class="btn btn-danger">삭제</button>
+                                          <button type="button" class="btn btn-warning text-white viewButton">조회</button>
+                                          <button type="button" class="btn btn-danger deleteButton">삭제</button>
                                           
                                       </td>
                                     </tr>
                                     <tr>
                                         <td>2</td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                    </tr>
-                                    <tr>
-                                        <td>5</td>
-                                    </tr>
-                                    <tr>
-                                        <td>6</td>
-                                    </tr>
-                                    <tr>
-                                        <td>7</td>
-                                    </tr>
-                                    <tr>
-                                        <td>8</td>
-                                    </tr>
-                                    <tr>
-                                        <td>9</td>
-                                    </tr>
-                                    <tr>
-                                        <td>10</td>
-                                    </tr>
+                                    </tr>-->
                                 </tbody>
                             </table>
                         </div>
@@ -94,17 +92,81 @@
                                 <li class="page-item"><a class="page-link" href="#">2</a></li>
                                 <li class="page-item"><a class="page-link" href="#">3</a></li>
                                 <li class="page-item">
-                                  <a class="page-link" href="#">Next</a>
+                                  <a class="page-link" href="#">Last</a>
                                 </li>
                               </ul>
                             </nav>
                     </div>
                 </div>
             </div>
+            <!--<div id="test"></div>-->
         </div>
     <script>
-        //게시판 헤더 불러오기
-        $('.header-include').load('boardheader.html');
+        $(document).ready(function () {
+            //게시판 헤더 불러오기
+            $('.header-include').load('boardheader.html');
+            //게시판 목록 set
+            function setData(){
+                //data table set
+                $.ajax({
+                    url : '../../php/board.php',
+                    type : 'POST',
+                    data : {call_name:'set_board'},
+                    error : function(){
+                        console.log("실패");
+                    }, success : function(result){
+                        $("#boardTable").children('tbody').empty();
+                        var list = JSON.parse(result);
+                        $.each(list, function(index,value){
+                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
+                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+                            
+                            var innerHTML = "";
+                            innerHTML += "<tr>";
+                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
+                            innerHTML += "<td>" + value['title'] + "</td>";
+                            innerHTML += "<td>" + value['writer'] + "</td>";
+                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
+                            innerHTML += "<td>" + setview + setDelete + "</td>";
+                            innerHTML += "</tr>";
+                            
+                            $("#boardTable").children('tbody').append(innerHTML);
+                        });
+                    }
+                });
+                
+            }
+            setData();
+            //게시글 조회
+            $(document).on('click', 'body div.container .viewButton', function() {
+                var thisRow = $(this).closest('tr'); 
+                var viewPk = parseInt(thisRow.find('th').text());
+                
+                location.href = "boardview.html?"+viewPk; 
+                
+            });
+            //게시글 삭제
+            $(document).on('click', 'body div.container .deleteButton', function() {
+                var thisRow = $(this).closest('tr'); 
+                var deletePk = parseInt(thisRow.find('th').text());
+                
+                $.ajax({
+                url : '../../php/board.php',
+                type : 'POST',
+                data : {call_name:'delete_post', deletePk:deletePk},
+                error : function(){
+                console.log("실패");
+                }, success : function(result){
+                    //$("#test").append(result);
+                    location.reload();
+                    }
+                });
+            });
+            $(document).on('click', '#boardWrite',function(){
+               location.href = 'boardwrite.html'; 
+            });
+        
+        });
     </script>
     </body>
 </html>

@@ -1,4 +1,3 @@
-<meta charset="utf-8">
 <?php
 
 include 'dbsql/dbconn.php';
@@ -31,15 +30,6 @@ switch ($call_name){
 	case  "insert_member":
 		insert_member(connetDB());
 		break;
-/* 	case  "insert_product":
-		insert_product(connetDB());
-		break;
-	case  "update_product":
-		update_product(connetDB());
-		break;
-	case  "delete_product":
-		delete_product(connetDB());
-		break; */
 }
 
 ?>

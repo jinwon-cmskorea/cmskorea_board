@@ -17,7 +17,17 @@
         <div class="header row bg-secondary">
             <h3 class="col-9 text-white align-self-center fw-bold">CMSKOREA Board</h3>
             <span class="col-1 text-center align-self-center text-white">홍길동</span>
-            <button class="col-1 border-white rounded-0 btn btn-sm bg-white">로그아웃</button>
+            <button class="col-1 border-white rounded-0 btn btn-sm bg-white" id="logout" >로그아웃</button>
         </div>
+        <script>
+            $(document).ready(function(){
+                //$("#loginForm").submit(function(){
+                //   location.href = 'board/boardlist.html'; 
+                //});
+                $(document).on('click', '#logout',function(){
+                   location.href = '../logout.html'; 
+                });
+            });
+        </script>
     </body>
 </html>

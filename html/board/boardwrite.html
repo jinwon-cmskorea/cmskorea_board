@@ -38,31 +38,57 @@
                             <div class="labelbox  text-center col-1 mx-5 my-2">
                                 <span class="text-white">제 목</span>
                             </div>
-                            <input type="text" class="col-9 inputwritebox align-self-center">
+                            <input type="text" class="col-9 inputwritebox align-self-center" id="writeTitle">
                         </div>
                         <div class="row">
                             <div class="labelbox  text-center col-1 mx-5 mb-5 my-2">
                                 <span class="text-white">내 용</span>
                             </div>
-                            <textarea  class="col-9 inputwritebox my-2" style="height: 400px; resize: none;"></textarea>
+                            <textarea  class="col-9 inputwritebox my-2" style="height: 400px; resize: none;" id="writeContent"></textarea>
                         </div>
                         <div class="row">
                             <div class="labelbox  text-center col-1 mx-5 my-2">
                                 <span class="text-white">작성자</span>
                             </div>
-                            <input type="text" class="col-2 inputwritebox align-self-center">
+                            <input type="text" class="col-2 inputwritebox align-self-center" id="writer">
                         </div>
                     </div>
                     <div class="mx-5 row">
-                        <button class="btn btn-primary col rounded-0 mx-1">등 록</button>
-                        <button class="col mx-1" style="border: solid 1px lightgray;">취소</button>
+                        <button class="btn btn-primary col rounded-0 mx-1" id="boardWrite">등 록</button>
+                        <button class="col mx-1" style="border: solid 1px lightgray;" id="writeCancel">취소</button>
                     </div>
+                    <!--<div id="test"></div>-->
                 </div>
             </div>
         </div>
     <script>
-        //게시판 헤더 불러오기
-        $('.header-include').load('boardheader.html');
+        $(document).ready(function () {
+            //게시판 헤더 불러오기
+            $('.header-include').load('boardheader.html');
+            
+            $("#boardWrite").on('click', function(){
+                var writeTitle = $("#writeTitle").val();
+                var writeContent = $("#writeContent").val();
+                var writer = $("#writer").val();
+                
+                $.ajax({
+                    url : '../../php/board.php',
+                    type : 'POST',
+                    data : {call_name:'write_post', writeTitle:writeTitle, writeContent:writeContent, writer:writer},
+                    error : function(){
+                    console.log("실패");
+                    }, success : function(result){
+                        location.href = 'boardlist.html'; 
+                            
+                        //$("#test").append(result);
+                        }
+                    });
+            });
+            //취소하기
+            $(document).on('click', '#writeCancel',function(){
+               location.href = 'boardlist.html'; 
+            });
+        });
     </script>
     </body>
 </html>

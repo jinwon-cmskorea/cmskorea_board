@@ -28,9 +28,19 @@
                     <p class="fs-4 text-black-50">로그아웃 되었습니다.</p>
                 </div>
                 <div class="d-grid gap-2">
-                    <button class="btn btn-primary btn-lg rounded-0">홈으로</button>
+                    <button class="btn btn-primary btn-lg rounded-0" id="home">홈으로</button>
                 </div>
             </div>
         </div>
+        <script>
+            $(document).ready(function(){
+                //$("#loginForm").submit(function(){
+                //   location.href = 'board/boardlist.html'; 
+                //});
+                $(document).on('click', '#home',function(){
+                   location.href = 'login.html'; 
+                });
+            });
+        </script>
     </body>
 </html>

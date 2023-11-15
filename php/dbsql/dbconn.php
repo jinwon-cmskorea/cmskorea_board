@@ -1,8 +1,7 @@
-<meta charset="utf-8">
 <?php 
 
 function connetDB(){
-	$mysql = mysqli_connect('localhost', 'root', 'cmskorea', 'board');
+	$mysql = mysqli_connect('localhost', 'root', 'cmskorea', 'dbboard');
 	
 	if ($mysql) {
 		//echo "DB연결 성공";

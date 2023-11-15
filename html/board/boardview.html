@@ -27,26 +27,55 @@
                 <div>
                     <div>
                         <div class="row">
-                            <div class="col-8 fs-3">안녕하세요. 새로 가입한 홍길동입니다.</div>
-                            <span  class="col-1  align-self-center">홍길동</span>
-                            <span  class="col-2  align-self-center">2020-02-05 16:05:32</span>
+                            <div class="col-8 fs-3" id="boardViewTitle"></div>
+                            <span  class="col-1  align-self-center" id="boardViewWriter"></span>
+                            <span  class="col-2  align-self-center" id="boardViewTime"></span>
                         </div>
-                        <div class="contentbox p-3">
-                            <p>안녕하세요.</p>
-                            <p>새로 가입한 홍길동입니다.</p>
-                            <p>잘 부탁 드리겠습니다.</p>
+                        <div class="contentbox p-3" id="boardViewContent">
                         </div>
                     </div>
                     <div class="mx-5 mt-4 row">
-                        <button class="btn btn-primary bg-warning border-warning col rounded-0 mx-1">수 정</button>
-                        <button class="col mx-1" style="border: solid 1px lightgray;">리스트</button>
+                        <button class="btn btn-primary bg-warning border-warning col rounded-0 mx-1" id="postEdit">수 정</button>
+                        <button class="col mx-1" style="border: solid 1px lightgray;" id="backList">리스트</button>
                     </div>
                 </div>
             </div>
         </div>
     <script>
-        //게시판 헤더 불러오기
-        $('.header-include').load('boardheader.html');
+        $(document).ready(function () {
+            //게시판 헤더 불러오기
+            $('.header-include').load('boardheader.html');
+            const viewPk = location.href.split('?')[1];
+            //게시글 조회
+            function setViewData(){
+                $.ajax({
+                    url : '../../php/board.php',
+                    type : 'POST',
+                    data : {call_name:'view_post', viewPk:viewPk},
+                    error : function(){
+                        console.log("실패");
+                    }, success : function(result){
+                        var list = JSON.parse(result);
+                        $("#boardViewTitle").html(list['title']);
+                        $("#boardViewWriter").html(list['writer']);
+                        $("#boardViewTime").html(list['updateTime']);
+                        $("#boardViewContent").html(list['content']);
+                    }
+                });
+            }
+            setViewData();
+            //$("#container").html('Hi there!');
+            
+            //수정하기
+            $(document).on('click', '#postEdit',function(){
+               location.href = "boardedit.html?"+viewPk;
+            });
+            
+            //취소하기
+            $(document).on('click', '#backList',function(){
+               location.href = 'boardlist.html'; 
+            });
+        });
     </script>
     </body>
 </html>
