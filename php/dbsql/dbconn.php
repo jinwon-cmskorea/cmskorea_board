@@ -29,7 +29,7 @@ function data_list($sql, $table) {
 	
 	return $rows;
 };
-function data_list_search($sql, $table, $row, $var) {
+function data_search($sql, $table, $row, $var) {
 	$query = "SELECT * FROM " . $table . " where " . $row . "='" . $var . "';";
 	$rs = mysqli_query($sql, $query);
 	
