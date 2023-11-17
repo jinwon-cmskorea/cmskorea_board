@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -44,7 +44,7 @@
     <script>
         $(document).ready(function () {
             //게시판 헤더 불러오기
-            $('.header-include').load('boardheader.html');
+            $('.header-include').load('boardheader.php');
             const viewPk = location.href.split('?')[1];
             //게시글 조회
             function setViewData(){
@@ -68,12 +68,12 @@
             
             //수정하기
             $(document).on('click', '#postEdit',function(){
-               location.href = "boardedit.html?"+viewPk;
+               location.href = "boardedit.php?"+viewPk;
             });
             
             //취소하기
             $(document).on('click', '#backList',function(){
-               location.href = 'boardlist.html'; 
+               location.href = 'boardlist.php'; 
             });
         });
     </script>

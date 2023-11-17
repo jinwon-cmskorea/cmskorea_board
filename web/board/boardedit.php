@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,7 +19,7 @@
                 line-height: 30px;
             }
         </style>
-        <title>작성 페이지</title>
+        <title>수정 페이지</title>
     </head>
     <body>
         <div class="container border border-secondary" style="height: 900px;">
@@ -27,10 +27,10 @@
             <div style="margin: 15px;">
                 <div class=" text-start" style="margin-bottom: 15px;">
                     <span class="fs-5" style="color: #595959; font-weight:bold">씨엠에스코리아 게시판</span>
-                    <span class="text-primary text-opacity-75" style="font-size: small; font-weight:bold">- 작성 -</span>
+                    <span class="text-primary text-opacity-75" style="font-size: small; font-weight:bold">- 수정 -</span>
                 </div>
                 <div class="border rounded  border-dark-subtle align-self-center" style="height: 65px; padding: 8px; margin-bottom: 30px; line-height: 48px;">
-                    <p>게시판 글을 작성합니다.</p>
+                    <p>게시판 글을 수정합니다.</p>
                 </div>
                 <div class="p-4">
                     <div class="mb-4">
@@ -38,13 +38,13 @@
                             <div class="labelbox  text-center col-1 mx-5 my-2">
                                 <span class="text-white">제 목</span>
                             </div>
-                            <input type="text" class="col-9 inputwritebox align-self-center" id="writeTitle">
+                            <input type="text" class="col-9 inputwritebox align-self-center" id="editTitle">
                         </div>
                         <div class="row">
                             <div class="labelbox  text-center col-1 mx-5 mb-5 my-2">
                                 <span class="text-white">내 용</span>
                             </div>
-                            <textarea  class="col-9 inputwritebox my-2" style="height: 400px; resize: none;" id="writeContent"></textarea>
+                            <textarea  class="col-9 inputwritebox my-2" style="height: 400px; resize: none;" id="editContent"></textarea>
                         </div>
                         <div class="row">
                             <div class="labelbox  text-center col-1 mx-5 my-2">
@@ -54,39 +54,54 @@
                         </div>
                     </div>
                     <div class="mx-5 row">
-                        <button class="btn btn-primary col rounded-0 mx-1" id="boardWrite">등 록</button>
-                        <button class="col mx-1" style="border: solid 1px lightgray;" id="writeCancel">취소</button>
+                        <button class="btn btn-primary bg-warning border-warning col rounded-0 mx-1" id="postEdit">수정</button>
+                        <button class="col mx-1" style="border: solid 1px lightgray;" id="backPost" >취소</button>
                     </div>
-                    <!--<div id="test"></div>-->
                 </div>
             </div>
         </div>
     <script>
         $(document).ready(function () {
             //게시판 헤더 불러오기
-            $('.header-include').load('boardheader.html');
-            
-            $("#boardWrite").on('click', function(){
-                var writeTitle = $("#writeTitle").val();
-                var writeContent = $("#writeContent").val();
-                var writer = $("#writer").val();
-                
+            $('.header-include').load('boardheader.php');
+            const viewPk = location.href.split('?')[1];
+            //게시글 조회
+            function setViewData(){
                 $.ajax({
                     url : '../../php/board.php',
                     type : 'POST',
-                    data : {call_name:'write_post', writeTitle:writeTitle, writeContent:writeContent, writer:writer},
+                    data : {call_name:'view_post', viewPk:viewPk},
+                    error : function(){
+                        console.log("실패");
+                    }, success : function(result){
+                        var list = JSON.parse(result);
+                        $('#editTitle').val(list['title']);
+                        $('#editContent').val(list['content']);
+                        $('#writer').val(list['writer']);
+                    }
+                });
+            }
+            setViewData()
+            //수정 완료하기
+            $(document).on('click', '#postEdit',function(){
+                var updateTitle = $('#editTitle').val();
+                var updateContent = $('#editContent').val();
+                var updateWriter = $('#writer').val();
+                $.ajax({
+                    url : '../../php/board.php',
+                    type : 'POST',
+                    data : {call_name:'update_post', viewPk:viewPk, updateTitle:updateTitle, updateContent:updateContent, updateWriter:updateWriter},
                     error : function(){
                     console.log("실패");
                     }, success : function(result){
-                        location.href = 'boardlist.html'; 
-                            
-                        //$("#test").append(result);
+                        location.href = "boardview.php?"+viewPk;
                         }
-                    });
+                });
             });
+            
             //취소하기
-            $(document).on('click', '#writeCancel',function(){
-               location.href = 'boardlist.html'; 
+            $(document).on('click', '#backPost',function(){
+               location.href = "boardview.php?"+viewPk;
             });
         });
     </script>

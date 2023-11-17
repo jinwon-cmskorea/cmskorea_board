@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,23 +10,29 @@
                 height: 60px;
                 padding: 10px;
             }
+            #logout{
+            	height : 40px;
+            	padding: 10px;
+            }
         </style>
         <title>게시판 헤더 페이지</title>
     </head>
     <body>
+    <?php 
+    if(!session_id()) {
+    	session_start();
+    }
+    
+    ?>
         <div class="header row bg-secondary">
             <h3 class="col-9 text-white align-self-center fw-bold">CMSKOREA Board</h3>
-            <span class="col-1 text-center align-self-center text-white">홍길동</span>
+            <span class="col-1 text-center align-self-center text-white"><?php print_r($_SESSION['userName']); ?></span>
             <button class="col-1 border-white rounded-0 btn btn-sm bg-white" id="logout" >로그아웃</button>
-            <!--<?php   echo( "<script>alert('아이디가 존재하지 않습니다!');</script>");?>-->
         </div>
         <script>
             $(document).ready(function(){
-                //$("#loginForm").submit(function(){
-                //   location.href = 'board/boardlist.html'; 
-                //});
                 $(document).on('click', '#logout',function(){
-                   location.href = '../logout.html'; 
+                   location.href = '../logout.php'; 
                 });
             });
         </script>

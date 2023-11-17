@@ -29,18 +29,23 @@ function data_list($sql, $table) {
 	
 	return $rows;
 };
-function data_search($sql, $table, $row, $var) {
-	$query = "SELECT * FROM " . $table . " where " . $row . "='" . $var . "';";
+function data_search($sql, $table, $searchrow, $row, $var) {
+	$query = "SELECT " . $searchrow . " FROM " . $table . " where " . $row . "='" . $var . "';";
 	$rs = mysqli_query($sql, $query);
 	
-	$num_record=mysqli_num_rows($rs);
-	// 	$rows = mysqli_fetch_all($rs);
+//	$num_record=mysqli_num_rows($rs);
+	$rows = mysqli_fetch_all($rs);
 	
-	// 	echo "<pre>";
-	// 	var_dump($rows);
-	// 	echo "</pre>";
-	// 	return $rows;
-	return $num_record;
+/* 	echo "<pre>";
+	var_dump($rows);
+	echo "</pre>";
+	//return $rows;
+	 */
+	
+	if (empty($rows))
+		return false;
+	else
+		return $rows[0][0];
 };
 //data_list(connetDB(), "test")
 ?>

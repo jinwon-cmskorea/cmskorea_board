@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,15 +27,15 @@
                     <hr/>
                     <p class="text-secondary ">아이디 / 비밀번호를 입력하여 주세요.</p>
                 </div>
-                <form method="post" action="../php/login.php" id="loginForm">
+                <form method="post" action="../php/logincheck.php" id="loginForm">
                     <div class="text-start grid gap-3">
                         <div class="row p-2 g-col-6">
                             <span class="col-3 align-self-center ">아이디</span>
-                            <input  type="text" class="col-8 form-control border-dark-subtle rounded-0" style="width: 70%;" id="name" name="name">
+                            <input  type="text" class="col-8 form-control border-dark-subtle rounded-0" style="width: 70%;" id="name" name="name" required>
                         </div>
                         <div class="row p-2 g-col-6">
                             <span class="col-3 align-self-center">비밀번호</span>
-                            <input  type="text" class="col-8 form-control border-dark-subtle rounded-0"  style="width: 70%;" id="password" name="password">
+                            <input  type="password" class="col-8 form-control border-dark-subtle rounded-0"  style="width: 70%;" id="password" name="password" required>
                         </div>
                     </div>
                     <div class="d-grid gap-2 p-2 g-col-6">
@@ -52,10 +52,10 @@
         <script>
             $(document).ready(function(){
                 //$("#loginForm").submit(function(){
-                //   location.href = 'board/boardlist.html'; 
+                //   location.href = 'board/boardlist.php'; 
                 //});
                 $(document).on('click', '#signupHTML',function(){
-                   location.href = 'signup.html'; 
+                   location.href = 'signup.php'; 
                 });
             });
         </script>

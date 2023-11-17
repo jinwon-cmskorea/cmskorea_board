@@ -15,6 +15,14 @@ function table_row_count(){
 	$num = mysqli_fetch_array($numsql);
 	return $num[0];
 }
+function search_table_row_count($row, $var ){
+	$query= "SELECT COUNT(*) FROM board where " . $row . " LIKE '%" . $var . "%';";
+	
+	$numsql = mysqli_query(connetDB(), $query);
+	$num = mysqli_fetch_array($numsql);
+
+	return $num[0];
+}
 /* paging : 현재 페이지 */
 $page = isset($_GET['page'])? $_GET['page'] : 1;
 
@@ -92,6 +100,7 @@ function pagination($list, $page, $count){
 
 function data_list_search($sql, $row, $var, $start_list, $last_list) {
 	$query = "SELECT * FROM board where " . $row . " LIKE '%" . $var . "%'limit ". $start_list .",". $last_list. ";";
+
 	$rs = mysqli_query($sql, $query);
 	
 	$data = array();
@@ -121,6 +130,9 @@ switch ($call_name){
 		break;
 	case  "data_list_search":
 		data_list_search(connetDB() ,$_GET['searchTag'],$_GET['searchInput'], $start, $list_num);
+		break;
+	case "searchpagination":
+		pagination($list_num ,$page_num ,search_table_row_count($_GET['searchTag'],$_GET['searchInput']));
 		break;
 }
 ?>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -80,16 +80,15 @@
         </div>
     <script>
         $(document).ready(function () {
+        
             //게시판 헤더 불러오기
-            $('.header-include').load('boardheader.html');
+            $('.header-include').load('boardheader.php');
             
             var page = location.href.split('page=')[1];
-            var searchCheck = false;
             setPageNav()
             //게시글 검색
             $("#searchButton").on('click', function(){
-                searchCheck = true;
-                setPageNav()
+                setSearchPageNav()
             });
             //게시판 목록 set(목록 크기에 맞게 가져오기)
             function setPageData(){
@@ -121,6 +120,7 @@
                     }
                 });
             }
+            //게시판 검색 목록 set(목록 크기에 맞게 가져오기)
             function setSearchPageData(){
                 searchTag = $("#searchSelectBox").val();
                 searchInput = $("#searchBar").val();
@@ -168,23 +168,49 @@
                         //console.log(list);
                         //console.log(list[0]['s_pageNum']);
                         $("#pagingnav").children('ul').empty();
-                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.html?page=1'>First</a></li>";
+                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1'>First</a></li>";
                         $("#pagination").append(innerHTML);
                         for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
                             innerHTML = "";
-                            innerHTML += "<li class='page-item'><a class='page-link' href='boardlist.html?page=" + $print_page +"'>" + $print_page +"</a></li>";
+                            innerHTML += "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + $print_page +"'>" + $print_page +"</a></li>";
                             //console.log(innerHTML);
                             $("#pagination").append(innerHTML);
                         }
-                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.html?page=" + list[0]['e_pageNum'] +"'>Last</a></li>";
+                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] +"'>Last</a></li>";
                         $("#pagination").append(innerHTML);
                         setPageData();
-                        if(searchCheck){
-                            setSearchPageData();
-                            searchCheck=false;
-                        }else{
-                            setPageData();
+                    }
+                });
+            }
+            //검색 게시판 목록 페이징
+            function setSearchPageNav(){
+                searchTag = $("#searchSelectBox").val();
+                searchInput = $("#searchBar").val();
+                $.ajax({
+                    url : '../../php/boardpage.php',
+                    type : 'GET',
+                    data : {call_name:'searchpagination' ,page: page, searchTag:searchTag ,searchInput: searchInput},
+                    error : function(){
+                        console.log("실패");
+                    }, success : function(result){
+                        $("#boardTable").children('tbody').empty();
+                       $("#test").append(result);
+                        var list = JSON.parse(result);
+                        var innerHTML = "";
+                        //console.log(list);
+                        //console.log(list[0]['s_pageNum']);
+                        $("#pagingnav").children('ul').empty();
+                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1'>First</a></li>";
+                        $("#pagination").append(innerHTML);
+                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
+                            innerHTML = "";
+                            innerHTML += "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + $print_page +"'>" + $print_page +"</a></li>";
+                            //console.log(innerHTML);
+                            $("#pagination").append(innerHTML);
                         }
+                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] +"'>Last</a></li>";
+                        $("#pagination").append(innerHTML);
+                        setSearchPageData();
                     }
                 });
             }
@@ -193,7 +219,7 @@
                 var thisRow = $(this).closest('tr'); 
                 var viewPk = parseInt(thisRow.find('th').text());
                 
-                location.href = "boardview.html?"+viewPk; 
+                location.href = "boardview.php?"+viewPk; 
                 
             });
             //게시글 삭제
@@ -214,7 +240,7 @@
                 });
             });
             $(document).on('click', '#boardWrite',function(){
-               location.href = 'boardwrite.html'; 
+               location.href = 'boardwrite.php'; 
             });
         
         });

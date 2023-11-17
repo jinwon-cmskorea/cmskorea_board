@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<html>
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,6 +20,12 @@
         <title>로그아웃 페이지</title>
     </head>
     <body>
+                <?php 
+	                if(!session_id()) {
+	                	session_start();
+	                }
+	                session_destroy();
+            	?>
         <div class="container">
             <div  class="text-center centerbox bg-secondary-subtle">
                 <div>
@@ -33,12 +39,13 @@
             </div>
         </div>
         <script>
+        
             $(document).ready(function(){
                 //$("#loginForm").submit(function(){
-                //   location.href = 'board/boardlist.html'; 
+                //   location.href = 'board/boardlist.php'; 
                 //});
                 $(document).on('click', '#home',function(){
-                   location.href = 'login.html'; 
+                   location.href = 'login.php'; 
                 });
             });
         </script>
