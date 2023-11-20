@@ -1,5 +1,8 @@
 <?php
 include 'dbsql/dbconn.php';
+if(!session_id()) {
+	session_start();
+}
 
 function set_board($sql){
 	//echo "board 확인용";
@@ -26,17 +29,17 @@ function write_post($sql){
 	$writeContent = $_POST['writeContent'];
 	$writer = $_POST['writer'];
 	
-	$find = "SELECT pk from member where name='" . $writer . "';";
+	$find = "SELECT pk from member where id='" . $writer . "';";
 	$memberPk = mysqli_num_rows(mysqli_query($sql, $find));
-
 	if($memberPk){
 		$query = "INSERT INTO board ( memberPk, title, writer, content, insertTime, updateTime) VALUE( ". $memberPk." ,'". $writeTitle."' ,'". $writer ."', '" . $writeContent . "' , now(), now());";
+		
 		$rs = mysqli_query($sql, $query);
 		if (!$rs) {
 			echo "등록실패 : " . mysqli_error($sql);
 		}
 	}else{
-		alert("게시글 등록에 실패했습니다.");
+		echo "게시글 등록에 실패했습니다.";
 	}
 }
 function view_post($sql){
@@ -83,13 +86,15 @@ switch ($call_name){
 		break;
 	case  "write_post":
 		write_post(connetDB());
+		$_SESSION['alert'] = 'write';
 		break;
 	case  "view_post":
 		view_post(connetDB());
 		 break;
 	case  "update_post":
 		update_post(connetDB());
-		 	break;
+		$_SESSION['alert'] = 'edit';
+		 break;
 	case  "delete_post":
 		delete_post(connetDB());
 		break; 

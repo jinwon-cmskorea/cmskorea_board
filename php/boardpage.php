@@ -60,6 +60,30 @@ function page_list($start_list, $last_list){
 	echo json_encode($data);
 }
 
+function page_list_sort($order_name, $order_sort ,$start_list, $last_list){
+	$sql = "select * from board order by ". $order_name . " " . $order_sort ." limit ". $start_list .",". $last_list. ";";
+	$result = mysqli_query(connetDB(), $sql);
+	$rows = array();
+	//echo $sql;
+	while(!!($row = mysqli_fetch_assoc($result))) {
+		$rows[] = $row;
+	}
+	$data = array();
+	foreach($rows as $jb_row ) {
+		$data[] = array(
+				'pk'		=> $jb_row['pk'],
+				'memberPk' 	=> $jb_row['memberPk'],
+				'title'		=> $jb_row['title'],
+				'writer'	 => $jb_row['writer'],
+				'content'	 => $jb_row['content'],
+				'views'		=> $jb_row['views'],
+				'insertTime'=> $jb_row['insertTime'],
+				'updateTime'=> $jb_row['updateTime'],
+		);
+		
+	}
+	echo json_encode($data);
+}
 function pagination($list, $page, $count){
 	/* paging : 전체 페이지 수 = 전체 데이터 / 페이지당 데이터 개수, ceil : 올림값, floor : 내림값, round : 반올림 */
 	$total_page = ceil($count / $list);
@@ -119,20 +143,30 @@ function data_list_search($sql, $row, $var, $start_list, $last_list) {
 	echo json_encode($data);
 };
 
-
-$call_name = $_GET['call_name'];
-switch ($call_name){
-	case  "page_list":
-		page_list($start, $list_num);
-		break;
-	case  "pagination":
-		pagination($list_num ,$page_num ,table_row_count());
-		break;
-	case  "data_list_search":
-		data_list_search(connetDB() ,$_GET['searchTag'],$_GET['searchInput'], $start, $list_num);
-		break;
-	case "searchpagination":
-		pagination($list_num ,$page_num ,search_table_row_count($_GET['searchTag'],$_GET['searchInput']));
-		break;
+if(isset($_GET['call_name'])){
+	$call_name = $_GET['call_name'];
+	switch ($call_name){
+		case  "page_list":
+			page_list($start, $list_num);
+			break;
+		case  "pagination":
+			pagination($list_num ,$page_num ,table_row_count());
+			break;
+		case  "data_list_search":
+			data_list_search(connetDB() ,$_GET['searchTag'],$_GET['searchInput'], $start, $list_num);
+			break;
+		case "searchpagination":
+			pagination($list_num ,$page_num ,search_table_row_count($_GET['searchTag'],$_GET['searchInput']));
+			break;
+		case "page_list_sort":
+			page_list_sort($_GET['order_name'] ,$_GET['order_sort'] ,$start, $list_num);
+			break;
+	}
 }
+	/* elseif (isset($_POST['call_name'])){
+	$call_name = $_POST['call_name'];
+	switch ($call_name){
+
+	}
+} */
 ?>

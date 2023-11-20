@@ -31,7 +31,7 @@
         <title>테스트 페이지</title>
     </head>
     <body>
-        <h2>테스트 페이지 입니다!</h2>
+    <h2>테스트 페이지 입니다!</h2>
                             <nav aria-label="Page navigation example">
                               <ul class="pagination justify-content-center">
                                 <li class="page-item disabled">
@@ -88,5 +88,71 @@
     <button class="btn btn-primary" type="submit">Submit form</button>
   </div>
 </form>
+<script>
+/*
+ css and sorting field mark(▼▲).
+ */
+var data = [
+            ['name', 'Java', 'Node', 'Perl'],
+            ['Gu', 80, 70, 30],
+            ['Kim', 90, 60, 80],
+            ['Lee', 70, 70, 70],
+            ['Brad', 50, 90, 90]
+           ];
+
+$(function() {
+    var table = $('<table>').css({'border': '1px solid', 'width': '300px'});
+    $('#targetPn').append( table );
+    
+    $.each(data, function(inx, row ) {
+        var tr = $('<tr>');
+        table.append(tr);
+        $.each(row, function(inx, col ) {
+            var td = $('<td>');
+            tr.append(td.html(col));
+        });
+    });
+    
+    table.find('tr:nth-child(1)').find('td').click(function() {
+        sortTable(this);
+    });
+    table.find('td').css({'border': '1px solid', 'width': '25%'});
+});
+
+function sortTable(cell){
+    $('table > tr:nth-child(1)').find('td').each(function(inx, td) {
+        td.innerHTML = td.innerHTML.replace(/[▼▲]/g, '') ;
+    });
+
+    var sortType = jQuery.data( cell, 'sortType');
+    if (sortType === 'asc') {
+        sortType = 'desc';
+        cell.innerHTML += '▼';
+    } else{
+        sortType = 'asc';
+        cell.innerHTML += '▲';
+    }
+    jQuery.data( cell, 'sortType', sortType);
+
+    var cellIndex = cell.cellIndex;
+    var chkSort = true;
+    while (chkSort){
+        chkSort = false;
+        $('table > tr').each(function(inx, row) {
+            if (inx===0 || !row.nextSibling) return;
+            var fCell = row.cells[cellIndex].innerHTML.toLowerCase();
+            var sCell = row.nextSibling.cells[cellIndex].innerHTML.toLowerCase();
+            if ( (sortType === 'asc'  && fCell > sCell) 
+              || (sortType === 'desc' && fCell < sCell) ) {
+                $( row.nextSibling ).insertBefore( $(row) );
+                chkSort = true;
+            }
+        });
+    }
+}
+
+</script>
+    <div id='targetPn' style='width:130px'>
+    </div>
     </body>
 </html>

@@ -58,10 +58,24 @@
                         <button class="col mx-1" style="border: solid 1px lightgray;" id="backPost" >취소</button>
                     </div>
                 </div>
+                <div class="text-start" id="alertBox"></div>
             </div>
         </div>
     <script>
         $(document).ready(function () {
+        	//경고문(입력 체크)  
+              	const appendAlert = (message, type, id) => {
+                 const alertPlaceholder = document.getElementById(id);
+                 const wrapper = document.createElement('div');
+                    wrapper.innerHTML = [
+                      `<div class="alert alert-${type} alert-dismissible alertmainbox" id="alertmain" >`,
+                      `   <div>${message}</div>`,
+                      '   <button type="button" id="alertclose" class="btn-close close" data-bs-dismiss="alert"></button>',
+                      '</div>'
+                    ].join('')
+                        
+                    alertPlaceholder.append(wrapper);
+                  }
             //게시판 헤더 불러오기
             $('.header-include').load('boardheader.php');
             const viewPk = location.href.split('?')[1];
@@ -87,16 +101,29 @@
                 var updateTitle = $('#editTitle').val();
                 var updateContent = $('#editContent').val();
                 var updateWriter = $('#writer').val();
-                $.ajax({
-                    url : '../../php/board.php',
-                    type : 'POST',
-                    data : {call_name:'update_post', viewPk:viewPk, updateTitle:updateTitle, updateContent:updateContent, updateWriter:updateWriter},
-                    error : function(){
-                    console.log("실패");
-                    }, success : function(result){
-                        location.href = "boardview.php?"+viewPk;
-                        }
-                });
+                
+                
+                if(!updateTitle){
+	 				$(".alertmainbox").remove();
+		            appendAlert('제목을 입력해 주세요!', 'danger','alertBox');
+                }else if(!updateContent){
+                	$(".alertmainbox").remove();
+                	appendAlert('내용을 입력해 주세요!', 'danger','alertBox');
+                }else if(!updateWriter){
+                	$(".alertmainbox").remove();
+                	appendAlert('작성자를 입력해 주세요!', 'danger','alertBox');
+                }else{
+	                $.ajax({
+	                    url : '../../php/board.php',
+	                    type : 'POST',
+	                    data : {call_name:'update_post', viewPk:viewPk, updateTitle:updateTitle, updateContent:updateContent, updateWriter:updateWriter},
+	                    error : function(){
+	                    console.log("실패");
+	                    }, success : function(result){
+	                        location.href = "boardview.php?"+viewPk;
+	                        }
+	                });
+                }
             });
             
             //취소하기

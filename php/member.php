@@ -8,14 +8,17 @@ function insert_member($sql){
 	$inputName = $_POST['memberName'];
 	$inputTel = $_POST['memberTel'];
 	
-	$binary = bin2hex($inputPw);
-	
+// 	$binary = bin2hex($inputPw);
+    //$normal = $inputPw;
+    
 	$query = "INSERT INTO member ( id, name, telNumber, insertTime, updateTime) VALUE( '". $inputId."' ,'". $inputName."' ,'". $inputTel."' , now(), now());";
 	$rs = mysqli_query($sql, $query);
 	if (!$rs) {
 		//echo "등록실패 : " . mysqli_error($sql);
 	}
-	$query = "INSERT INTO auth_identity ( id, pw, name, insertTime) VALUE( '". $inputId ."' ,'". $binary ."' ,'". $inputName."' , now());";
+	$query = "INSERT INTO auth_identity ( id, pw, name, insertTime) VALUE( '". $inputId ."' ,'". md5($inputPw) ."' ,'". $inputName."' , now());";
+ 	//$query = "INSERT INTO auth_identity ( id, pw, name, insertTime) VALUE( '". $inputId ."' ,'". $binary ."' ,'". $inputName."' , now());";
+	//$query = "INSERT INTO auth_identity ( id, pw, name, insertTime) VALUE( '". $inputId ."' ,'". $normal ."' ,'". $inputName."' , now());";
 	$rs = mysqli_query($sql, $query);
 	
 	if (!$rs) {

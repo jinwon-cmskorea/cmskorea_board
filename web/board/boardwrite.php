@@ -22,6 +22,12 @@
         <title>작성 페이지</title>
     </head>
     <body>
+    <?php 
+    if(!session_id()) {
+    	session_start();
+    }
+    
+    ?>
         <div class="container border border-secondary" style="height: 900px;">
             <div class="header-include"></div>
             <div style="margin: 15px;">
@@ -50,39 +56,62 @@
                             <div class="labelbox  text-center col-1 mx-5 my-2">
                                 <span class="text-white">작성자</span>
                             </div>
-                            <input type="text" class="col-2 inputwritebox align-self-center" id="writer">
+                            <input type="text" class="col-2 inputwritebox align-self-center" id="writer" value="<?php echo $_SESSION['userName'] ?>" >
                         </div>
                     </div>
                     <div class="mx-5 row">
                         <button class="btn btn-primary col rounded-0 mx-1" id="boardWrite">등 록</button>
                         <button class="col mx-1" style="border: solid 1px lightgray;" id="writeCancel">취소</button>
                     </div>
-                    <!--<div id="test"></div>-->
                 </div>
+                <div class="text-start" id="alertBox"></div>
             </div>
         </div>
     <script>
         $(document).ready(function () {
+        	//경고문(입력 체크)  
+              	const appendAlert = (message, type, id) => {
+                 const alertPlaceholder = document.getElementById(id);
+                 const wrapper = document.createElement('div');
+                    wrapper.innerHTML = [
+                      `<div class="alert alert-${type} alert-dismissible alertmainbox" id="alertmain" >`,
+                      `   <div>${message}</div>`,
+                      '   <button type="button" id="alertclose" class="btn-close close" data-bs-dismiss="alert"></button>',
+                      '</div>'
+                    ].join('')
+                        
+                    alertPlaceholder.append(wrapper);
+                  }
             //게시판 헤더 불러오기
             $('.header-include').load('boardheader.php');
-            
+			//작성 버튼
             $("#boardWrite").on('click', function(){
                 var writeTitle = $("#writeTitle").val();
                 var writeContent = $("#writeContent").val();
                 var writer = $("#writer").val();
-                
-                $.ajax({
-                    url : '../../php/board.php',
-                    type : 'POST',
-                    data : {call_name:'write_post', writeTitle:writeTitle, writeContent:writeContent, writer:writer},
-                    error : function(){
-                    console.log("실패");
-                    }, success : function(result){
-                        location.href = 'boardlist.php'; 
-                            
-                        //$("#test").append(result);
-                        }
-                    });
+
+                if(!writeTitle){
+	 				$(".alertmainbox").remove();
+		            appendAlert('제목을 입력해 주세요!', 'danger','alertBox');
+                }else if(!writeContent){
+                	$(".alertmainbox").remove();
+                	appendAlert('내용을 입력해 주세요!', 'danger','alertBox');
+                }else if(!writer){
+                	$(".alertmainbox").remove();
+                	appendAlert('작성자를 입력해 주세요!', 'danger','alertBox');
+                }else{
+	                $.ajax({
+	                    url : '../../php/board.php',
+	                    type : 'POST',
+	                    data : {call_name:'write_post', writeTitle:writeTitle, writeContent:writeContent, writer:writer},
+	                    error : function(){
+	                    console.log("실패");
+	                    }, success : function(result){
+	                    	$("#alertBox").append(result);
+	                        location.href = 'boardlist.php'; 
+	                        }
+	                    });
+                }
             });
             //취소하기
             $(document).on('click', '#writeCancel',function(){

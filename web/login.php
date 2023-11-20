@@ -27,19 +27,19 @@
                     <hr/>
                     <p class="text-secondary ">아이디 / 비밀번호를 입력하여 주세요.</p>
                 </div>
-                <form method="post" action="../php/logincheck.php" id="loginForm">
+                <form method="post" action="../php/logincheck.php" id="loginForm" onsubmit="return checkForm();">
                     <div class="text-start grid gap-3">
                         <div class="row p-2 g-col-6">
                             <span class="col-3 align-self-center ">아이디</span>
-                            <input  type="text" class="col-8 form-control border-dark-subtle rounded-0" style="width: 70%;" id="name" name="name" required>
+                            <input  type="text" class="col-8 form-control border-dark-subtle rounded-0" style="width: 70%;" id="name" name="name" >
                         </div>
                         <div class="row p-2 g-col-6">
                             <span class="col-3 align-self-center">비밀번호</span>
-                            <input  type="password" class="col-8 form-control border-dark-subtle rounded-0"  style="width: 70%;" id="password" name="password" required>
+                            <input  type="password" class="col-8 form-control border-dark-subtle rounded-0"  style="width: 70%;" id="password" name="password">
                         </div>
                     </div>
                     <div class="d-grid gap-2 p-2 g-col-6">
-                        <button class="btn btn-primary btn-lg rounded-0" id="loginButton">로그인</button>
+                        <button type="submit" class="btn btn-primary btn-lg rounded-0" id="loginButton">로그인</button>
                     </div>
                     <div class="row justify-content-end">
                             <div class="col-5">
@@ -47,17 +47,43 @@
                         <button type="button" class="btn btn-primary  col-2 p-2 g-col-6 rounded-0" style="margin-right: 20px;" id="signupHTML" >회원가입</button>
                     </div>
                 </form>
+                <div class="text-start mt-4" id="alertBox"></div>
             </div>
         </div>
         <script>
-            $(document).ready(function(){
-                //$("#loginForm").submit(function(){
-                //   location.href = 'board/boardlist.php'; 
-                //});
-                $(document).on('click', '#signupHTML',function(){
-                   location.href = 'signup.php'; 
-                });
-            });
+           		function checkForm() {
+					const appendAlert = (message, type, id) => {
+	                 const alertPlaceholder = document.getElementById(id);
+	                 const wrapper = document.createElement('div');
+	                    wrapper.innerHTML = [
+	                      `<div class="alert alert-${type} alert-dismissible alertmainbox" id="alertmain" >`,
+	                      `   <div>${message}</div>`,
+	                      '   <button type="button" id="alertclose" class="btn-close close" data-bs-dismiss="alert"></button>',
+	                      '</div>'
+	                    ].join('')
+	                        
+	                    alertPlaceholder.append(wrapper);
+	                  } ;
+	                var check = false;
+					var loginName = $("#name").val();
+		            var loginPassword = $("#password").val();
+		                
+					if(!loginName){
+			 			$(".alertmainbox").remove();
+			            appendAlert('아이디를 입력해 주세요!', 'danger','alertBox');
+			            return check;
+	                }else if(!loginPassword){
+	                	$(".alertmainbox").remove();
+	                	appendAlert('비밀번호를 입력해 주세요!', 'danger','alertBox');
+	                	return check;
+	                }else{
+	                	check = true;
+		            } 
+            	return check;
+            	}
+/*             $(document).ready(function(){
+
+            }); */
         </script>
     </body>
 </html>

@@ -35,12 +35,12 @@ function data_search($sql, $table, $searchrow, $row, $var) {
 	
 //	$num_record=mysqli_num_rows($rs);
 	$rows = mysqli_fetch_all($rs);
-	
-/* 	echo "<pre>";
+/* 	echo $query;
+ 	echo "<pre>";
 	var_dump($rows);
-	echo "</pre>";
+	echo "</pre>"; */
 	//return $rows;
-	 */
+	 
 	
 	if (empty($rows))
 		return false;
