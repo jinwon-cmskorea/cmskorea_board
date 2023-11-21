@@ -117,7 +117,29 @@
         	console.log(searchInput);
         	console.log(orderName);
         	console.log(sort);  */
-
+        	
+			//가져온 JSON 변환 및 테이블 리스트 추가
+			function setTable (result){
+                $("#boardTable").children('tbody').empty();
+                var list = JSON.parse(result);
+                //console.log("함수 작동 확인용");
+                $.each(list, function(index,value){
+                    var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
+                    var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+                    var innerHTML = "";
+                    innerHTML += "<tr class='align-middle' >";
+                    innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
+                    innerHTML += "<td>" + value['title'] + "</td>";
+                    innerHTML += "<td>" + value['writer'] + "</td>";
+                    innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
+                    innerHTML += "<td>" + setview + setDelete + "</td>";
+                    innerHTML += "</tr>";
+                   
+                    $("#boardTable").children('tbody').append(innerHTML);
+                });
+			}
+			
+			
             //게시판 헤더 불러오기
         	$('.header-include').load('boardheader.php');
         	
@@ -169,24 +191,7 @@
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
+                        	setTable (result);
 	                    }
                     });
 				}else{
@@ -199,24 +204,7 @@
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
+                        	setTable (result);
 	                    }
                     });
 				}
@@ -243,24 +231,7 @@
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
+                        	setTable (result);
 	                    }
                     });
 			        sort = 'desc';
@@ -273,24 +244,7 @@
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
+                        	setTable (result);
 	                    }
                     });
                     sort = 'asc';
@@ -312,24 +266,7 @@
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
+                        	setTable (result);
 	                    }
                     });
 				}else{
@@ -342,24 +279,7 @@
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
+                        	setTable (result);
 	                    }
                     });
 				}
@@ -387,24 +307,7 @@
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
+                        	setTable (result);
 	                    }
                     });
 			        sort = 'desc';
@@ -417,24 +320,7 @@
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
+                        	setTable (result);
 	                    }
                     });
                     sort = 'asc';
@@ -456,24 +342,7 @@
                     error : function(){
                         console.log("실패");
                     }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        });
+                        setTable (result);
                     }
                 });
             }
@@ -486,24 +355,7 @@
                     error : function(){
                         console.log("실패");
                     }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                        $("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        });
+                        setTable (result);
                     }
                 });
             }
