@@ -83,7 +83,7 @@
                     </div>
                 </div>
             </div>
-           <div ><a id="test">테스트</a></div>
+           <!-- <div ><a id="test">테스트</a></div> -->
         </div>
     <script>
         $(document).ready(function () {
@@ -103,32 +103,38 @@
 		}
 		
 		const params = getParams();
-		console.log(params);
+		//console.log(params);
         var page = params['page'];
         var searchTag = params['searchTag'];
         var searchInput = params['searchInput'];
         var orderName = params['orderName'];
         var sort = params['sort'];
-        
-        	console.log(page);
+        if(page == undefined){
+        	page = 1;
+        }
+			/* console.log(page);
         	console.log(searchTag);
         	console.log(searchInput);
         	console.log(orderName);
-        	console.log(sort);
+        	console.log(sort);  */
 
             //게시판 헤더 불러오기
         	$('.header-include').load('boardheader.php');
         	
         	//페이지 구별(검색, 정렬 여부 체크)
-        	if(searchTag !== undefined && searchInput !== undefined ){
+        	if(searchTag !== undefined && searchInput !== undefined && orderName !== undefined && sort !== undefined){
         		setSearchPageNav();
+        		//console.log("1-체크");
+        	}else if(searchTag !== undefined && searchInput !== undefined ){
+        		setSearchPageNav();
+        		//console.log("2-체크");
         	}else if(orderName !== undefined && sort !== undefined){
         		setPageNav();
-        		sortReTable(orderName, sort);
-        		//console.log(orderName + "-체크");
+        		//console.log("3-체크");
         	}
         	else{
         		setPageNav();
+        		//console.log("4-체크");
         	}
             //게시글 정렬
             $(document).on('click', 'body div.container #boardTable>thead th', function() {
@@ -138,8 +144,8 @@
 				//console.log(orderName); 
                 /*location.href = "boardview.php?"+viewPk;  */
 
-                if(searchTag !== undefined && searchInput !== undefined ){
-        			sortReTable(orderName, sort);
+                if(searchTag !== undefined && searchInput !== undefined){
+        			sortSearchTable(this);
         			setSearchPageNav();
         			
         		}else{
@@ -153,48 +159,13 @@
 				$('table > thead').find('th').each(function(inx, th) {
 			        th.innerHTML = th.innerHTML.replace(/[▼▲]/g, '') ;
 			    });
-			    console.log(cell); 
-			    var sortType = jQuery.data( cell, 'sortType');
-			    if (sortType === 'desc') {
-			        sortType =  'asc';
-			        sort = 'asc';
-			        cell.innerHTML += '▲';
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:'asc'},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
-	                    }
-                    });
-
-			    } else{
-			        sortType = 'desc';
+				if(sort ==='asc' || sort ===undefined){
 			        sort = 'desc';
 			        cell.innerHTML += '▼';
 			        $.ajax({
 	                    url : '../../php/boardpage.php',
 	                    type : 'GET',
-	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:'desc'},
+	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:sort},
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
@@ -218,12 +189,40 @@
                         	});
 	                    }
                     });
-			    }
-			    jQuery.data( cell, 'sortType', sortType);
-			    
-                    st = "boardlist.php?page=2&orderName="+ orderName + "&sort=" + sort;
+				}else{
+			        sort = 'asc';
+			        cell.innerHTML += '▲';
+			        $.ajax({
+	                    url : '../../php/boardpage.php',
+	                    type : 'GET',
+	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:sort},
+	                    error : function(){
+	                        console.log("실패");
+	                    }, success : function(result){
+                        $("#boardTable").children('tbody').empty();
+                       //$("#test").append(result);
+                        var list = JSON.parse(result);
+                        $.each(list, function(index,value){
+                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
+                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+                            
+                            var innerHTML = "";
+                            innerHTML += "<tr class='align-middle' >";
+                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
+                            innerHTML += "<td>" + value['title'] + "</td>";
+                            innerHTML += "<td>" + value['writer'] + "</td>";
+                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
+                            innerHTML += "<td>" + setview + setDelete + "</td>";
+                            innerHTML += "</tr>";
+                            
+                            $("#boardTable").children('tbody').append(innerHTML);
+                        	});
+	                    }
+                    });
+				}
+				/*  st = "boardlist.php?page=2&orderName="+ orderName + "&sort=" + sort;
                     console.log(st);
-                    $("#test").attr("href",st); 
+                    $("#test").attr("href",st);  */
 			
             }
             //게시글 리로드때 정렬
@@ -231,44 +230,16 @@
 				$('table > thead').find('th').each(function(inx, th) {
 			        th.innerHTML = th.innerHTML.replace(/[▼▲]/g, '') ;
 			    });
-			    if (set === 'desc') {
-			        $("th[value=" + name + "]").append('▼');
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:'asc'},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        $.each(list, function(index,value){
-                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                            
-                            var innerHTML = "";
-                            innerHTML += "<tr class='align-middle' >";
-                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                            innerHTML += "<td>" + value['title'] + "</td>";
-                            innerHTML += "<td>" + value['writer'] + "</td>";
-                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                            innerHTML += "<td>" + setview + setDelete + "</td>";
-                            innerHTML += "</tr>";
-                            
-                            $("#boardTable").children('tbody').append(innerHTML);
-                        	});
-	                    }
-                    });
-			        sortType =  'asc';
-			        sort = 'asc';
-			    } else{
-			        
+			    if(set ==='asc'){
+			    	set ='desc';
+			    }else{set ='asc';}
+			    
+			    if (set === 'asc') {
 			        $("th[value=" + name + "]").append('▲');
 			        $.ajax({
 	                    url : '../../php/boardpage.php',
 	                    type : 'GET',
-	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:'desc'},
+	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:sort},
 	                    error : function(){
 	                        console.log("실패");
 	                    }, success : function(result){
@@ -292,9 +263,184 @@
                         	});
 	                    }
                     });
-                    sort = 'desc';
+			        sort = 'desc';
+			    } else{
+			        $("th[value=" + name + "]").append('▼');
+			        $.ajax({
+	                    url : '../../php/boardpage.php',
+	                    type : 'GET',
+	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:sort},
+	                    error : function(){
+	                        console.log("실패");
+	                    }, success : function(result){
+                        $("#boardTable").children('tbody').empty();
+                       //$("#test").append(result);
+                        var list = JSON.parse(result);
+                        $.each(list, function(index,value){
+                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
+                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+                            
+                            var innerHTML = "";
+                            innerHTML += "<tr class='align-middle' >";
+                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
+                            innerHTML += "<td>" + value['title'] + "</td>";
+                            innerHTML += "<td>" + value['writer'] + "</td>";
+                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
+                            innerHTML += "<td>" + setview + setDelete + "</td>";
+                            innerHTML += "</tr>";
+                            
+                            $("#boardTable").children('tbody').append(innerHTML);
+                        	});
+	                    }
+                    });
+                    sort = 'asc';
 			    }
             }
+            
+            //게시글 검색 정렬
+            function sortSearchTable(cell){
+				$('table > thead').find('th').each(function(inx, th) {
+			        th.innerHTML = th.innerHTML.replace(/[▼▲]/g, '') ;
+			    });
+				if(sort ==='asc' || sort ===undefined){
+			        sort = 'desc';
+			        cell.innerHTML += '▼';
+			        $.ajax({
+	                    url : '../../php/boardpage.php',
+	                    type : 'GET',
+	                    data : {call_name:'page_list_search_sort', page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
+	                    error : function(){
+	                        console.log("실패");
+	                    }, success : function(result){
+                        $("#boardTable").children('tbody').empty();
+                       //$("#test").append(result);
+                        var list = JSON.parse(result);
+                        $.each(list, function(index,value){
+                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
+                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+                            
+                            var innerHTML = "";
+                            innerHTML += "<tr class='align-middle' >";
+                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
+                            innerHTML += "<td>" + value['title'] + "</td>";
+                            innerHTML += "<td>" + value['writer'] + "</td>";
+                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
+                            innerHTML += "<td>" + setview + setDelete + "</td>";
+                            innerHTML += "</tr>";
+                            
+                            $("#boardTable").children('tbody').append(innerHTML);
+                        	});
+	                    }
+                    });
+				}else{
+			        sort = 'asc';
+			        cell.innerHTML += '▲';
+			        $.ajax({
+	                    url : '../../php/boardpage.php',
+	                    type : 'GET',
+	                    data : {call_name:'page_list_search_sort', page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
+	                    error : function(){
+	                        console.log("실패");
+	                    }, success : function(result){
+                        $("#boardTable").children('tbody').empty();
+                       //$("#test").append(result);
+                        var list = JSON.parse(result);
+                        $.each(list, function(index,value){
+                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
+                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+                            
+                            var innerHTML = "";
+                            innerHTML += "<tr class='align-middle' >";
+                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
+                            innerHTML += "<td>" + value['title'] + "</td>";
+                            innerHTML += "<td>" + value['writer'] + "</td>";
+                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
+                            innerHTML += "<td>" + setview + setDelete + "</td>";
+                            innerHTML += "</tr>";
+                            
+                            $("#boardTable").children('tbody').append(innerHTML);
+                        	});
+	                    }
+                    });
+				}
+				/*  st = "boardlist.php?page=2&orderName="+ orderName + "&sort=" + sort;
+                    console.log(st);
+                    $("#test").attr("href",st);  */
+			
+            }
+            //게시글 검색 리로드때 정렬
+            function sortSearchReTable(){
+            //console.log("게시글 검색 리로드 확인");
+				$('table > thead').find('th').each(function(inx, th) {
+			        th.innerHTML = th.innerHTML.replace(/[▼▲]/g, '') ;
+			    });
+			    if(sort ==='asc'){
+			    	sort ='desc';
+			    }else{sort ='asc';}
+			    
+			    if (sort === 'asc') {
+			        $("th[value=" + orderName + "]").append('▲');
+			        $.ajax({
+	                    url : '../../php/boardpage.php',
+	                    type : 'GET',
+	                    data : {call_name:'page_list_search_sort', page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
+	                    error : function(){
+	                        console.log("실패");
+	                    }, success : function(result){
+                        $("#boardTable").children('tbody').empty();
+                       //$("#test").append(result);
+                        var list = JSON.parse(result);
+                        $.each(list, function(index,value){
+                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
+                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+                            
+                            var innerHTML = "";
+                            innerHTML += "<tr class='align-middle' >";
+                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
+                            innerHTML += "<td>" + value['title'] + "</td>";
+                            innerHTML += "<td>" + value['writer'] + "</td>";
+                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
+                            innerHTML += "<td>" + setview + setDelete + "</td>";
+                            innerHTML += "</tr>";
+                            
+                            $("#boardTable").children('tbody').append(innerHTML);
+                        	});
+	                    }
+                    });
+			        sort = 'desc';
+			    } else{
+			        $("th[value=" + orderName + "]").append('▼');
+			        $.ajax({
+	                    url : '../../php/boardpage.php',
+	                    type : 'GET',
+	                    data : {call_name:'page_list_search_sort', page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
+	                    error : function(){
+	                        console.log("실패");
+	                    }, success : function(result){
+                        $("#boardTable").children('tbody').empty();
+                       //$("#test").append(result);
+                        var list = JSON.parse(result);
+                        $.each(list, function(index,value){
+                            var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
+                            var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+                            
+                            var innerHTML = "";
+                            innerHTML += "<tr class='align-middle' >";
+                            innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
+                            innerHTML += "<td>" + value['title'] + "</td>";
+                            innerHTML += "<td>" + value['writer'] + "</td>";
+                            innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
+                            innerHTML += "<td>" + setview + setDelete + "</td>";
+                            innerHTML += "</tr>";
+                            
+                            $("#boardTable").children('tbody').append(innerHTML);
+                        	});
+	                    }
+                    });
+                    sort = 'asc';
+			    }
+            }
+            
             //게시글 검색
             $("#searchButton").on('click', function(){
                 searchTag = $("#searchSelectBox").val();
@@ -341,7 +487,7 @@
                         console.log("실패");
                     }, success : function(result){
                         $("#boardTable").children('tbody').empty();
-                        //$("#test").append(result);
+                        $("#test").append(result);
                         var list = JSON.parse(result);
                         $.each(list, function(index,value){
                             var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
@@ -391,7 +537,7 @@
 	                        
 	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] + "&orderName="+ orderName + "&sort=" + sort   +"'>Last</a></li>";
 	                        $("#pagination").append(innerHTML);
-			        	}else{
+			        	}else if(orderName == undefined && sort == undefined){
 	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1'>First</a></li>";
 	                        $("#pagination").append(innerHTML);
 	                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
@@ -410,10 +556,16 @@
             }
             //검색 게시판 목록 페이징
             function setSearchPageNav(){
+            	
             	if($('#searchBar').val()){
             		searchTag = $("#searchSelectBox").val();
                 	searchInput = $("#searchBar").val();
             	}
+            	/*  console.log(page);
+	        	console.log(searchTag);
+	        	console.log(searchInput);
+	        	console.log(orderName);
+	        	console.log(sort); */
                 $.ajax({
                     url : '../../php/boardpage.php',
                     type : 'GET',
@@ -429,9 +581,11 @@
                         //console.log(list[0]['s_pageNum']);
                         $("#pagingnav").children('ul').empty();
                         if(orderName !== undefined && sort !== undefined){
-			        		sortReTable(orderName, sort);
-			        		//console.log(orderName + "-체크");
-	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1&searchTag="+ searchTag +"&searchInput=" + searchInput + "orderName="+ orderName + "&sort=" + sort + "'>First</a></li>";
+                        	sortSearchReTable();
+			        		//setSearchPageData();
+			        		//console.log("검색 페이징체크");
+			        		//console.log(searchInput+"확인");
+	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1&searchTag="+ searchTag +"&searchInput=" + searchInput + "&orderName="+ orderName + "&sort=" + sort + "'>First</a></li>";
 	                        $("#pagination").append(innerHTML);
 	                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
 	                            innerHTML = "";
@@ -439,10 +593,10 @@
 	                            //console.log(innerHTML);
 	                            $("#pagination").append(innerHTML);
 	                        }
-	                        
 	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] + "&searchTag="+ searchTag +"&searchInput=" + searchInput + "&orderName="+ orderName + "&sort=" + sort   +"'>Last</a></li>";
 	                        $("#pagination").append(innerHTML);
-			        	}else{
+			        	}else if(orderName == undefined && sort == undefined){
+	                        //console.log("검색 페이징-체크");
 	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1&searchTag="+ searchTag +"&searchInput=" + searchInput + "'>First</a></li>";
 	                        $("#pagination").append(innerHTML);
 	                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){

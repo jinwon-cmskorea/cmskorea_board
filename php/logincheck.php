@@ -9,10 +9,10 @@ $loginPw = $_POST['password'];
 
 $md5Pw = md5($loginPw);
 
-$searchId =data_search(connetDB(), "auth_identity", "id","id", $loginId);
-$searchPw = data_search(connetDB(), "auth_identity", "pw", "pw", $md5Pw); 
+$searchId =data_search( "auth_identity", "id","id", $loginId);
+$searchPw = data_search( "auth_identity", "pw", "pw", $md5Pw); 
 
-$searchIdPw = data_search(connetDB(), "auth_identity", "pw", "id", $loginId); 
+$searchIdPw = data_search( "auth_identity", "pw", "id", $loginId); 
 
 
 // echo bin2hex($loginPw). "-입력 비번값변환 "; 

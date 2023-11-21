@@ -81,9 +81,11 @@
 		            } 
             	return check;
             	}
-/*             $(document).ready(function(){
-
-            }); */
+             $(document).ready(function(){
+                $(document).on('click', '#signupHTML',function(){
+                   location.href = 'signup.php'; 
+                });
+            }); 
         </script>
     </body>
 </html>

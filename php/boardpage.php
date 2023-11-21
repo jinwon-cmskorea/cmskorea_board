@@ -84,6 +84,31 @@ function page_list_sort($order_name, $order_sort ,$start_list, $last_list){
 	}
 	echo json_encode($data);
 }
+function page_list_search_sort($row, $var, $order_name, $order_sort ,$start_list, $last_list){
+	$sql = "select * from board where " . $row . " LIKE '%" . $var . "%'  order by ". $order_name . " " . $order_sort ." limit ". $start_list .",". $last_list. ";";
+	$result = mysqli_query(connetDB(), $sql);
+	$rows = array();
+	//echo $sql;
+	while(!!($row = mysqli_fetch_assoc($result))) {
+		$rows[] = $row;
+	}
+	$data = array();
+	foreach($rows as $jb_row ) {
+		$data[] = array(
+				'pk'		=> $jb_row['pk'],
+				'memberPk' 	=> $jb_row['memberPk'],
+				'title'		=> $jb_row['title'],
+				'writer'	 => $jb_row['writer'],
+				'content'	 => $jb_row['content'],
+				'views'		=> $jb_row['views'],
+				'insertTime'=> $jb_row['insertTime'],
+				'updateTime'=> $jb_row['updateTime'],
+		);
+		
+	}
+	echo json_encode($data);
+}
+
 function pagination($list, $page, $count){
 	/* paging : 전체 페이지 수 = 전체 데이터 / 페이지당 데이터 개수, ceil : 올림값, floor : 내림값, round : 반올림 */
 	$total_page = ceil($count / $list);
@@ -122,11 +147,10 @@ function pagination($list, $page, $count){
 }
 
 
-function data_list_search($sql, $row, $var, $start_list, $last_list) {
+function data_list_search($row, $var, $start_list, $last_list) {
 	$query = "SELECT * FROM board where " . $row . " LIKE '%" . $var . "%'limit ". $start_list .",". $last_list. ";";
-
-	$rs = mysqli_query($sql, $query);
 	
+	$rs = mysqli_query(connetDB(), $query);
 	$data = array();
 	foreach($rs as $jb_row ) {
 		$data[] = array(
@@ -153,13 +177,16 @@ if(isset($_GET['call_name'])){
 			pagination($list_num ,$page_num ,table_row_count());
 			break;
 		case  "data_list_search":
-			data_list_search(connetDB() ,$_GET['searchTag'],$_GET['searchInput'], $start, $list_num);
+			data_list_search($_GET['searchTag'],urldecode($_GET['searchInput']), $start, $list_num);
 			break;
 		case "searchpagination":
-			pagination($list_num ,$page_num ,search_table_row_count($_GET['searchTag'],$_GET['searchInput']));
+			pagination($list_num ,$page_num ,search_table_row_count($_GET['searchTag'],urldecode($_GET['searchInput'])));
 			break;
 		case "page_list_sort":
 			page_list_sort($_GET['order_name'] ,$_GET['order_sort'] ,$start, $list_num);
+			break;
+		case "page_list_search_sort":
+			page_list_search_sort($_GET['searchTag'], urldecode($_GET['searchInput']), $_GET['order_name'] ,$_GET['order_sort'] ,$start, $list_num);
 			break;
 	}
 }
@@ -169,4 +196,5 @@ if(isset($_GET['call_name'])){
 
 	}
 } */
+//search_sort_table_row_count('writer', 'te' ,'writer','desc');
 ?>

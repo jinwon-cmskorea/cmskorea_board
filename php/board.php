@@ -8,7 +8,7 @@ function set_board($sql){
 	//echo "board 확인용";
 	
 	$data = array();
-	foreach(data_list($sql, "board") as $jb_row ) {
+	foreach(data_list("board") as $jb_row ) {
 		$data[] = array(
 				'pk'		=> $jb_row['pk'],
 				'memberPk' 	=> $jb_row['memberPk'],
@@ -24,37 +24,37 @@ function set_board($sql){
 }
 
 
-function write_post($sql){
+function write_post(){
 	$writeTitle = $_POST['writeTitle'];
 	$writeContent = $_POST['writeContent'];
 	$writer = $_POST['writer'];
 	
 	$find = "SELECT pk from member where id='" . $writer . "';";
-	$memberPk = mysqli_num_rows(mysqli_query($sql, $find));
+	$memberPk = mysqli_num_rows(mysqli_query(connetDB(), $find));
 	if($memberPk){
 		$query = "INSERT INTO board ( memberPk, title, writer, content, insertTime, updateTime) VALUE( ". $memberPk." ,'". $writeTitle."' ,'". $writer ."', '" . $writeContent . "' , now(), now());";
 		
-		$rs = mysqli_query($sql, $query);
+		$rs = mysqli_query(connetDB(), $query);
 		if (!$rs) {
-			echo "등록실패 : " . mysqli_error($sql);
+			echo "등록실패 : " . mysqli_error(connetDB());
 		}
 	}else{
 		echo "게시글 등록에 실패했습니다.";
 	}
 }
-function view_post($sql){
+function view_post(){
 	$viewPk = $_POST['viewPk'];
 	$query = "SELECT * FROM board WHERE pk =". $viewPk .";";
 	//echo $query;
-	$rs = mysqli_query($sql, $query);
+	$rs = mysqli_query(connetDB(), $query);
 	$row = mysqli_fetch_assoc($rs);
 	
 	if (!$rs) {
-		echo "등록실패 : " . mysqli_error($sql);
+		echo "등록실패 : " . mysqli_error(connetDB());
 	}
 	echo json_encode($row);
 }
-function update_post($sql){
+function update_post(){
 	$viewPk = $_POST['viewPk'];
 	$updateTitle = $_POST['updateTitle'];
 	$updateContent = $_POST['updateContent'];
@@ -62,41 +62,41 @@ function update_post($sql){
 	
 	$query = "UPDATE board SET title='" . $updateTitle . "', content='"  . $updateContent . "', writer='" . $updateWriter . "', updateTime= now() WHERE pk =". $viewPk .";";
 	//echo $query;
-	$rs = mysqli_query($sql, $query);
+	$rs = mysqli_query(connetDB(), $query);
 	
 	if (!$rs) {
-		echo "등록실패 : " . mysqli_error($sql);
+		echo "등록실패 : " . mysqli_error(connetDB());
 	}
 }
 
 
-function delete_post($sql){
+function delete_post(){
 	$deletePk = $_POST['deletePk'];
 	$query = "DELETE FROM board WHERE pk =". $deletePk .";";
-	$rs = mysqli_query($sql, $query);
+	$rs = mysqli_query(connetDB(), $query);
 	
 	if (!$rs) {
-		echo "등록실패 : " . mysqli_error($sql);
+		echo "등록실패 : " . mysqli_error(connetDB());
 	}
 }
 $call_name = $_POST['call_name'];
 switch ($call_name){
 	case  "set_board":
-		set_board(connetDB());
+		set_board();
 		break;
 	case  "write_post":
-		write_post(connetDB());
+		write_post();
 		$_SESSION['alert'] = 'write';
 		break;
 	case  "view_post":
-		view_post(connetDB());
+		view_post();
 		 break;
 	case  "update_post":
-		update_post(connetDB());
+		update_post();
 		$_SESSION['alert'] = 'edit';
 		 break;
 	case  "delete_post":
-		delete_post(connetDB());
+		delete_post();
 		break; 
 }
 ?>
