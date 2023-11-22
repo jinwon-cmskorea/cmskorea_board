@@ -48,7 +48,6 @@
                 $(document).on('click', '#logout',function(){
                    location.href = '../logout.php'; 
                 });
-
             });
         </script>
     </body>

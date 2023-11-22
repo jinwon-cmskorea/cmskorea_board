@@ -14,8 +14,11 @@
         <title>조회 페이지</title>
     </head>
     <body>
-        <div class="container border border-secondary" style="height: 900px;">
+        <div class="container border border-secondary" style="height: 920px;">
             <div class="header-include"></div>
+            <?php
+			include 'boardheader.php';
+			?>
             <div style="margin: 15px;">
                 <div class=" text-start" style="margin-bottom: 15px;">
                     <span class="fs-5" style="color: #595959; font-weight:bold">씨엠에스코리아 게시판</span>
@@ -43,8 +46,6 @@
         </div>
     <script>
         $(document).ready(function () {
-            //게시판 헤더 불러오기
-            $('.header-include').load('boardheader.php');
             const viewPk = location.href.split('?')[1];
             //게시글 조회
             function setViewData(){

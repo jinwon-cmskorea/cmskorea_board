@@ -34,9 +34,17 @@
     if(!session_id()) {
     	session_start();
     }
+    
+    if(!isset($_SESSION['userName'])){
+    	echo( "<script>alert('로그인 실패 후 접속했습니다!');</script>");
+    	echo("<script>location.replace('../login.php');</script>");
+    }
     ?>
         <div class="container border border-secondary" style="height: 920px;">
             <div class="header-include"></div>
+            <?php
+			include 'boardheader.php';
+			?>
             <div style="margin: 15px;">
                 <div class=" text-start" style="margin-bottom: 15px;">
                     <span class="fs-5" style="color: #595959; font-weight:bold">씨엠에스코리아 게시판</span>
@@ -69,7 +77,7 @@
 	                                    <th class="col-6 text-center" id="boardTitle" value="title">제목</th>
 	                                    <th class="col-1" id="boardWriter" value="writer">작성자</th>
 	                                    <th class="col-1" id="boardInsertTime" value="insertTime">작성일자</th>
-	                                    <th class="col-2">작업</th>
+	                                    <th class="col-2" id="nosort" value="nosort">작업</th>
 	                                </tr>
                                 </thead>
                                 <tbody>
@@ -86,6 +94,7 @@
            <!-- <div ><a id="test">테스트</a></div> -->
         </div>
     <script>
+    
         $(document).ready(function () {
         //get parameter 가져오기
         const urlParams = window.location.search;
@@ -101,7 +110,6 @@
 		    }
 		    return params;
 		}
-		
 		const params = getParams();
 		//console.log(params);
         var page = params['page'];
@@ -109,6 +117,7 @@
         var searchInput = params['searchInput'];
         var orderName = params['orderName'];
         var sort = params['sort'];
+        var pagecheck = false;
         if(page == undefined){
         	page = 1;
         }
@@ -118,179 +127,87 @@
         	console.log(orderName);
         	console.log(sort);  */
         	
-			//가져온 JSON 변환 및 테이블 리스트 추가
+        	//ajax setTable 실행 변수 선언
+	        var ajaxUrl = '../../php/boardpage.php';
+	        var ajaxType = 'GET';
+	        var ajaxParamCall = 'page_list';
+	        var ajaxParam = {call_name: ajaxParamCall, page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort}; 
+        	//ajax setTable 실행 함수
+         	function ajaxData(callName){
+                $.ajax({
+	                url : '../../php/boardpage.php',
+	                type : 'GET',
+	                data : {call_name:callName, page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
+                    error : function(){
+                        console.log("실패");
+                    }, success : function(result){
+                        setTable(result);
+                    }
+                });
+        	}
+        	 
+			//가져온 JSON 변환 및 테이블 리스트 추가 함수
 			function setTable (result){
                 $("#boardTable").children('tbody').empty();
-                var list = JSON.parse(result);
-                //console.log("함수 작동 확인용");
-                $.each(list, function(index,value){
-                    var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-                    var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
-                    var innerHTML = "";
-                    innerHTML += "<tr class='align-middle' >";
-                    innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
-                    innerHTML += "<td>" + value['title'] + "</td>";
-                    innerHTML += "<td>" + value['writer'] + "</td>";
-                    innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
-                    innerHTML += "<td>" + setview + setDelete + "</td>";
-                    innerHTML += "</tr>";
-                   
-                    $("#boardTable").children('tbody').append(innerHTML);
-                });
+                //console.log(result);
+				try{
+					if(searchTag !== undefined && searchInput !== undefined && result.length === 2){
+						$("#pagination").children("li").empty();
+						var innerHTML = "";
+						innerHTML += "<td class='align-middle text-center fs-3 fw-bold py-4' colspan='4'>검색결과가 존재하지 않습니다!</td>";
+						innerHTML += "<td class='align-middle text-center fs-5 fw-bold py-4'><a class='link-info' href='boardlist.php'>돌아가기</a></td>";
+						$("#boardTable").children('tbody').append(innerHTML);
+					}else{
+		                var list = JSON.parse(result);
+		                $.each(list, function(index,value){
+		                    var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
+		                    var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+		                    var innerHTML = "";
+		                    innerHTML += "<tr class='align-middle' >";
+		                    innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
+		                    innerHTML += "<td>" + value['title'] + "</td>";
+		                    innerHTML += "<td>" + value['writer'] + "</td>";
+		                    innerHTML += "<td>" + value['insertTime'].substr(0,10) + "</td>";
+		                    innerHTML += "<td>" + setview + setDelete + "</td>";
+		                    innerHTML += "</tr>";
+		                   
+		                    $("#boardTable").children('tbody').append(innerHTML);
+		                });
+	                }
+				}catch(e){
+					$("#pagination").children("li").empty();
+					var innerHTML = "";
+					innerHTML += "<tr><td class='align-middle text-center fs-3 fw-bold py-4' colspan='5'>게시글 리스트를 불러오기 실패했습니다!</td></tr>";
+					innerHTML += "<tr><td class='align-middle text-center py-2' colspan='5'>오류내용 : " + e + "</td>/tr>";
+					$("#boardTable").children('tbody').append(innerHTML);
+					
+				}
 			}
-			
-			
-            //게시판 헤더 불러오기
-        	$('.header-include').load('boardheader.php');
+      		//nav 출력 함수
+      		function navstring (result){
+      		
+      		}
+      		
+        	//메인 함수 호출
+        	setPageNav();
         	
-        	//페이지 구별(검색, 정렬 여부 체크)
-        	if(searchTag !== undefined && searchInput !== undefined && orderName !== undefined && sort !== undefined){
-        		setSearchPageNav();
-        		//console.log("1-체크");
-        	}else if(searchTag !== undefined && searchInput !== undefined ){
-        		setSearchPageNav();
-        		//console.log("2-체크");
-        	}else if(orderName !== undefined && sort !== undefined){
-        		setPageNav();
-        		//console.log("3-체크");
-        	}
-        	else{
-        		setPageNav();
-        		//console.log("4-체크");
-        	}
+	
             //게시글 정렬
             $(document).on('click', 'body div.container #boardTable>thead th', function() {
 				var thisRow = $(this).closest('th');
 				orderName = (thisRow).attr('value');
-				//console.log(thisRow);
-				//console.log(orderName); 
-                /*location.href = "boardview.php?"+viewPk;  */
-
-                if(searchTag !== undefined && searchInput !== undefined){
-        			sortSearchTable(this);
-        			setSearchPageNav();
-        			
-        		}else{
-	                sortTable(this,orderName);
-	                setPageNav()
-        		}
-        	
+				if(!(orderName == "nosort")){
+					if(sort ==='desc' || sort === undefined){
+					        sort = 'asc';
+						}else{
+					        sort = 'desc';
+						}
+		        		setPageNav();
+				}
             });
             
-            function sortTable(cell, name){
-				$('table > thead').find('th').each(function(inx, th) {
-			        th.innerHTML = th.innerHTML.replace(/[▼▲]/g, '') ;
-			    });
-				if(sort ==='asc' || sort ===undefined){
-			        sort = 'desc';
-			        cell.innerHTML += '▼';
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:sort},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        	setTable (result);
-	                    }
-                    });
-				}else{
-			        sort = 'asc';
-			        cell.innerHTML += '▲';
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:sort},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        	setTable (result);
-	                    }
-                    });
-				}
-				/*  st = "boardlist.php?page=2&orderName="+ orderName + "&sort=" + sort;
-                    console.log(st);
-                    $("#test").attr("href",st);  */
-			
-            }
             //게시글 리로드때 정렬
-            function sortReTable(name, set){
-				$('table > thead').find('th').each(function(inx, th) {
-			        th.innerHTML = th.innerHTML.replace(/[▼▲]/g, '') ;
-			    });
-			    if(set ==='asc'){
-			    	set ='desc';
-			    }else{set ='asc';}
-			    
-			    if (set === 'asc') {
-			        $("th[value=" + name + "]").append('▲');
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:sort},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        	setTable (result);
-	                    }
-                    });
-			        sort = 'desc';
-			    } else{
-			        $("th[value=" + name + "]").append('▼');
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_sort', page: page, order_name:name, order_sort:sort},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        	setTable (result);
-	                    }
-                    });
-                    sort = 'asc';
-			    }
-            }
-            
-            //게시글 검색 정렬
-            function sortSearchTable(cell){
-				$('table > thead').find('th').each(function(inx, th) {
-			        th.innerHTML = th.innerHTML.replace(/[▼▲]/g, '') ;
-			    });
-				if(sort ==='asc' || sort ===undefined){
-			        sort = 'desc';
-			        cell.innerHTML += '▼';
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_search_sort', page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        	setTable (result);
-	                    }
-                    });
-				}else{
-			        sort = 'asc';
-			        cell.innerHTML += '▲';
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_search_sort', page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        	setTable (result);
-	                    }
-                    });
-				}
-				/*  st = "boardlist.php?page=2&orderName="+ orderName + "&sort=" + sort;
-                    console.log(st);
-                    $("#test").attr("href",st);  */
-			
-            }
-            //게시글 검색 리로드때 정렬
-            function sortSearchReTable(){
-            //console.log("게시글 검색 리로드 확인");
+            function sortReTable(){
 				$('table > thead').find('th').each(function(inx, th) {
 			        th.innerHTML = th.innerHTML.replace(/[▼▲]/g, '') ;
 			    });
@@ -300,143 +217,48 @@
 			    
 			    if (sort === 'asc') {
 			        $("th[value=" + orderName + "]").append('▲');
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_search_sort', page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        	setTable (result);
-	                    }
-                    });
+			        ajaxData('page_data_list');
 			        sort = 'desc';
 			    } else{
 			        $("th[value=" + orderName + "]").append('▼');
-			        $.ajax({
-	                    url : '../../php/boardpage.php',
-	                    type : 'GET',
-	                    data : {call_name:'page_list_search_sort', page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
-	                    error : function(){
-	                        console.log("실패");
-	                    }, success : function(result){
-                        	setTable (result);
-	                    }
-                    });
+			        ajaxData('page_data_list');
                     sort = 'asc';
 			    }
             }
-            
             //게시글 검색
             $("#searchButton").on('click', function(){
+            	if(page !==1){
+            		pagecheck = true;
+            	}
                 searchTag = $("#searchSelectBox").val();
                 searchInput = $("#searchBar").val();
-                setSearchPageNav();
+                setPageNav();
             });
-            //게시판 목록 set(목록 크기에 맞게 가져오기)
-            function setPageData(){
-                $.ajax({
-                    url : '../../php/boardpage.php',
-                    type : 'GET',
-                    data : {call_name:'page_list' ,page: page},
-                    error : function(){
-                        console.log("실패");
-                    }, success : function(result){
-                        setTable (result);
-                    }
-                });
-            }
-            //게시판 검색 목록 set(목록 크기에 맞게 가져오기)
-            function setSearchPageData(){
-                $.ajax({
-                    url : '../../php/boardpage.php',
-                    type : 'GET',
-                    data : {call_name:'data_list_search' ,page: page, searchTag:searchTag ,searchInput: searchInput},
-                    error : function(){
-                        console.log("실패");
-                    }, success : function(result){
-                        setTable (result);
-                    }
-                });
-            }
+            
+
             //게시판 목록 페이징
             function setPageNav(){
-                $.ajax({
-                    url : '../../php/boardpage.php',
-                    type : 'GET',
-                    data : {call_name:'pagination' ,page: page},
-                    error : function(){
-                        console.log("실패");
-                    }, success : function(result){
-                        $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
-                        var list = JSON.parse(result);
-                        var innerHTML = "";
-                        //console.log(list);
-                        //console.log(list[0]['s_pageNum']);
-                        $("#pagingnav").children('ul').empty();
-                        if(orderName !== undefined && sort !== undefined){
-			        		sortReTable(orderName, sort);
-			        		//console.log(orderName + "-체크");
-	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1&orderName="+ orderName + "&sort=" + sort + "'>First</a></li>";
-	                        $("#pagination").append(innerHTML);
-	                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
-	                            innerHTML = "";
-	                            innerHTML += "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + $print_page + "&orderName="+ orderName + "&sort=" + sort +"'>" + $print_page +"</a></li>";
-	                            //console.log(innerHTML);
-	                            $("#pagination").append(innerHTML);
-	                        }
-	                        
-	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] + "&orderName="+ orderName + "&sort=" + sort   +"'>Last</a></li>";
-	                        $("#pagination").append(innerHTML);
-			        	}else if(orderName == undefined && sort == undefined){
-	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1'>First</a></li>";
-	                        $("#pagination").append(innerHTML);
-	                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
-	                            innerHTML = "";
-	                            innerHTML += "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + $print_page +"'>" + $print_page +"</a></li>";
-	                            //console.log(innerHTML);
-	                            $("#pagination").append(innerHTML);
-	                        }
-	                        
-	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] +"'>Last</a></li>";
-	                        $("#pagination").append(innerHTML);
-	                        setPageData();
-                        }
-                    }
-                });
-            }
-            //검색 게시판 목록 페이징
-            function setSearchPageNav(){
-            	
             	if($('#searchBar').val()){
             		searchTag = $("#searchSelectBox").val();
                 	searchInput = $("#searchBar").val();
             	}
-            	/*  console.log(page);
-	        	console.log(searchTag);
-	        	console.log(searchInput);
-	        	console.log(orderName);
-	        	console.log(sort); */
+            	 if(pagecheck){
+					page = 1;
+					pagecheck = false;
+					
+				} 
                 $.ajax({
                     url : '../../php/boardpage.php',
                     type : 'GET',
-                    data : {call_name:'searchpagination' ,page: page, searchTag:searchTag ,searchInput: searchInput},
+                    data : {call_name:'pagination' ,page:page, searchTag:searchTag ,searchInput: searchInput},
                     error : function(){
                         console.log("실패");
                     }, success : function(result){
                         $("#boardTable").children('tbody').empty();
-                       //$("#test").append(result);
                         var list = JSON.parse(result);
                         var innerHTML = "";
-                        //console.log(list);
-                        //console.log(list[0]['s_pageNum']);
                         $("#pagingnav").children('ul').empty();
                         if(orderName !== undefined && sort !== undefined){
-                        	sortSearchReTable();
-			        		//setSearchPageData();
-			        		//console.log("검색 페이징체크");
-			        		//console.log(searchInput+"확인");
 	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1&searchTag="+ searchTag +"&searchInput=" + searchInput + "&orderName="+ orderName + "&sort=" + sort + "'>First</a></li>";
 	                        $("#pagination").append(innerHTML);
 	                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
@@ -447,8 +269,8 @@
 	                        }
 	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] + "&searchTag="+ searchTag +"&searchInput=" + searchInput + "&orderName="+ orderName + "&sort=" + sort   +"'>Last</a></li>";
 	                        $("#pagination").append(innerHTML);
+	                        sortReTable();
 			        	}else if(orderName == undefined && sort == undefined){
-	                        //console.log("검색 페이징-체크");
 	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1&searchTag="+ searchTag +"&searchInput=" + searchInput + "'>First</a></li>";
 	                        $("#pagination").append(innerHTML);
 	                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
@@ -459,7 +281,8 @@
 	                        }
 	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] +"&searchTag="+ searchTag +"&searchInput=" + searchInput +"'>Last</a></li>";
 	                        $("#pagination").append(innerHTML);
-	                        setSearchPageData();
+	                        //게시판 검색 목록 set(목록 크기에 맞게 가져오기)
+                			ajaxData('page_data_list');
                         }
                     }
                 });

@@ -4,9 +4,8 @@ if(!session_id()) {
 	session_start();
 }
 
-function set_board($sql){
+function set_board(){
 	//echo "board 확인용";
-	
 	$data = array();
 	foreach(data_list("board") as $jb_row ) {
 		$data[] = array(

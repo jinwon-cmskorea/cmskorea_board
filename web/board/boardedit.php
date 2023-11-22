@@ -22,8 +22,11 @@
         <title>수정 페이지</title>
     </head>
     <body>
-        <div class="container border border-secondary" style="height: 900px;">
+        <div class="container border border-secondary" style="height: 920px;">
             <div class="header-include"></div>
+            <?php
+			include 'boardheader.php';
+			?>
             <div style="margin: 15px;">
                 <div class=" text-start" style="margin-bottom: 15px;">
                     <span class="fs-5" style="color: #595959; font-weight:bold">씨엠에스코리아 게시판</span>
@@ -38,13 +41,13 @@
                             <div class="labelbox  text-center col-1 mx-5 my-2">
                                 <span class="text-white">제 목</span>
                             </div>
-                            <input type="text" class="col-9 inputwritebox align-self-center" id="editTitle">
+                            <input type="text" class="col-9 inputwritebox align-self-center" id="editTitle" placeholder="제목을 입력해주세요." >
                         </div>
                         <div class="row">
                             <div class="labelbox  text-center col-1 mx-5 mb-5 my-2">
                                 <span class="text-white">내 용</span>
                             </div>
-                            <textarea  class="col-9 inputwritebox my-2" style="height: 400px; resize: none;" id="editContent"></textarea>
+                            <textarea  class="col-9 inputwritebox my-2" style="height: 400px; resize: none;" id="editContent"  placeholder="내용을 입력해주세요."></textarea>
                         </div>
                         <div class="row">
                             <div class="labelbox  text-center col-1 mx-5 my-2">
@@ -76,8 +79,6 @@
                         
                     alertPlaceholder.append(wrapper);
                   }
-            //게시판 헤더 불러오기
-            $('.header-include').load('boardheader.php');
             const viewPk = location.href.split('?')[1];
             //게시글 조회
             function setViewData(){
@@ -90,7 +91,7 @@
                     }, success : function(result){
                         var list = JSON.parse(result);
                         $('#editTitle').val(list['title']);
-                        $('#editContent').val(list['content']);
+                        $('#editContent').val(list['content'].replaceAll("<br>","\n"));
                         $('#writer').val(list['writer']);
                     }
                 });
@@ -101,7 +102,7 @@
                 var updateTitle = $('#editTitle').val();
                 var updateContent = $('#editContent').val();
                 var updateWriter = $('#writer').val();
-                
+                updateContent = updateContent.replaceAll(/(\n|\r\n)/g, "<br>");
                 
                 if(!updateTitle){
 	 				$(".alertmainbox").remove();

@@ -9,18 +9,15 @@ $list_num = 10;
 $page_num = 5;
 
 /* 전체 데이터 개수 구하기*/
-function table_row_count(){
-	$query= "SELECT COUNT(*) FROM board;";
+function table_row_count($row, $var ){
+	$query = "";
+	if(isset($row) && isset($var)){
+		$query= "SELECT COUNT(*) FROM board where " . $row . " LIKE '%" . $var . "%';";
+	}else{
+		$query= "SELECT COUNT(*) FROM board;";
+	}
 	$numsql = mysqli_query(connetDB(), $query);
 	$num = mysqli_fetch_array($numsql);
-	return $num[0];
-}
-function search_table_row_count($row, $var ){
-	$query= "SELECT COUNT(*) FROM board where " . $row . " LIKE '%" . $var . "%';";
-	
-	$numsql = mysqli_query(connetDB(), $query);
-	$num = mysqli_fetch_array($numsql);
-
 	return $num[0];
 }
 /* paging : 현재 페이지 */
@@ -29,85 +26,10 @@ $page = isset($_GET['page'])? $_GET['page'] : 1;
 /* paging : 시작 번호 = (현재 페이지 번호 - 1) * 페이지 당 보여질 데이터 수 */
 $start = ($page - 1) * $list_num;
 
-
-//$rows = mysqli_fetch_all($result);
-
 /* echo "<pre>";
 var_dump($rows);
 echo "</pre>";
  */
-function page_list($start_list, $last_list){
-	$sql = "select * from board limit ". $start_list .",". $last_list. ";";
-	$result = mysqli_query(connetDB(), $sql);
-	$rows = array();
-	while(!!($row = mysqli_fetch_assoc($result))) {
-		$rows[] = $row;
-	}
-	$data = array();
-	foreach($rows as $jb_row ) {
-		$data[] = array(
-				'pk'		=> $jb_row['pk'],
-				'memberPk' 	=> $jb_row['memberPk'],
-				'title'		=> $jb_row['title'],
-				'writer'	 => $jb_row['writer'],
-				'content'	 => $jb_row['content'],
-				'views'		=> $jb_row['views'],
-				'insertTime'=> $jb_row['insertTime'],
-				'updateTime'=> $jb_row['updateTime'],
-		);
-		
-	}
-	echo json_encode($data);
-}
-
-function page_list_sort($order_name, $order_sort ,$start_list, $last_list){
-	$sql = "select * from board order by ". $order_name . " " . $order_sort ." limit ". $start_list .",". $last_list. ";";
-	$result = mysqli_query(connetDB(), $sql);
-	$rows = array();
-	//echo $sql;
-	while(!!($row = mysqli_fetch_assoc($result))) {
-		$rows[] = $row;
-	}
-	$data = array();
-	foreach($rows as $jb_row ) {
-		$data[] = array(
-				'pk'		=> $jb_row['pk'],
-				'memberPk' 	=> $jb_row['memberPk'],
-				'title'		=> $jb_row['title'],
-				'writer'	 => $jb_row['writer'],
-				'content'	 => $jb_row['content'],
-				'views'		=> $jb_row['views'],
-				'insertTime'=> $jb_row['insertTime'],
-				'updateTime'=> $jb_row['updateTime'],
-		);
-		
-	}
-	echo json_encode($data);
-}
-function page_list_search_sort($row, $var, $order_name, $order_sort ,$start_list, $last_list){
-	$sql = "select * from board where " . $row . " LIKE '%" . $var . "%'  order by ". $order_name . " " . $order_sort ." limit ". $start_list .",". $last_list. ";";
-	$result = mysqli_query(connetDB(), $sql);
-	$rows = array();
-	//echo $sql;
-	while(!!($row = mysqli_fetch_assoc($result))) {
-		$rows[] = $row;
-	}
-	$data = array();
-	foreach($rows as $jb_row ) {
-		$data[] = array(
-				'pk'		=> $jb_row['pk'],
-				'memberPk' 	=> $jb_row['memberPk'],
-				'title'		=> $jb_row['title'],
-				'writer'	 => $jb_row['writer'],
-				'content'	 => $jb_row['content'],
-				'views'		=> $jb_row['views'],
-				'insertTime'=> $jb_row['insertTime'],
-				'updateTime'=> $jb_row['updateTime'],
-		);
-		
-	}
-	echo json_encode($data);
-}
 
 function pagination($list, $page, $count){
 	/* paging : 전체 페이지 수 = 전체 데이터 / 페이지당 데이터 개수, ceil : 올림값, floor : 내림값, round : 반올림 */
@@ -147,12 +69,25 @@ function pagination($list, $page, $count){
 }
 
 
-function data_list_search($row, $var, $start_list, $last_list) {
-	$query = "SELECT * FROM board where " . $row . " LIKE '%" . $var . "%'limit ". $start_list .",". $last_list. ";";
+function page_data_list($row, $var, $order_name, $order_sort ,$start_list, $last_list){
+	$query = "";
+	if(isset($row) && isset($var) && isset($order_name) && isset($order_sort)){
+		$query = "select * from board where " . $row . " LIKE '%" . $var . "%'  order by ". $order_name . " " . $order_sort ." limit ". $start_list .",". $last_list. ";";
+	}elseif (isset($order_name) && isset($order_sort)){
+		$query = "select * from board order by ". $order_name . " " . $order_sort ." limit ". $start_list .",". $last_list. ";";
+	}elseif (isset($row) && isset($var)){
+		$query = "SELECT * FROM board where " . $row . " LIKE '%" . $var . "%'limit ". $start_list .",". $last_list. ";";
+	}else{
+		$query = "select * from board limit ". $start_list .",". $last_list. ";";
+	}
+	$result = mysqli_query(connetDB(), $query);
+	$rows = array();
 	
-	$rs = mysqli_query(connetDB(), $query);
+	while(!!($row = mysqli_fetch_assoc($result))) {
+		$rows[] = $row;
+	}
 	$data = array();
-	foreach($rs as $jb_row ) {
+	foreach($rows as $jb_row ) {
 		$data[] = array(
 				'pk'		=> $jb_row['pk'],
 				'memberPk' 	=> $jb_row['memberPk'],
@@ -163,38 +98,34 @@ function data_list_search($row, $var, $start_list, $last_list) {
 				'insertTime'=> $jb_row['insertTime'],
 				'updateTime'=> $jb_row['updateTime'],
 		);
+		
 	}
 	echo json_encode($data);
-};
+}
 
 if(isset($_GET['call_name'])){
 	$call_name = $_GET['call_name'];
+	$searchTag = isset($_GET['searchTag'])? $_GET['searchTag'] : null;
+	$searchInput = isset($_GET['searchInput'])? $_GET['searchInput'] : null;
+	$order_name = isset($_GET['order_name'])? $_GET['order_name'] : null;
+	$order_sort = isset($_GET['order_sort'])? $_GET['order_sort'] : null;
+	
+	if ($searchTag === "undefined" && $searchInput === "undefined"){
+		$searchTag = null;
+		$searchInput = null;
+	}
+	if ($order_name === "undefined" && $order_sort === "undefined"){
+		$order_name = null;
+		$order_sort = null;
+	}
+	
 	switch ($call_name){
-		case  "page_list":
-			page_list($start, $list_num);
+		case "pagination":
+			pagination($list_num ,$page_num ,table_row_count($searchTag,urldecode($searchInput)));
 			break;
-		case  "pagination":
-			pagination($list_num ,$page_num ,table_row_count());
-			break;
-		case  "data_list_search":
-			data_list_search($_GET['searchTag'],urldecode($_GET['searchInput']), $start, $list_num);
-			break;
-		case "searchpagination":
-			pagination($list_num ,$page_num ,search_table_row_count($_GET['searchTag'],urldecode($_GET['searchInput'])));
-			break;
-		case "page_list_sort":
-			page_list_sort($_GET['order_name'] ,$_GET['order_sort'] ,$start, $list_num);
-			break;
-		case "page_list_search_sort":
-			page_list_search_sort($_GET['searchTag'], urldecode($_GET['searchInput']), $_GET['order_name'] ,$_GET['order_sort'] ,$start, $list_num);
+		case "page_data_list":
+			page_data_list($searchTag, urldecode($searchInput), $order_name ,$order_sort ,$start, $list_num);
 			break;
 	}
 }
-	/* elseif (isset($_POST['call_name'])){
-	$call_name = $_POST['call_name'];
-	switch ($call_name){
-
-	}
-} */
-//search_sort_table_row_count('writer', 'te' ,'writer','desc');
 ?>

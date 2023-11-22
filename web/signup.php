@@ -39,30 +39,19 @@
                     <div class="row p-2 g-col-6 input-group" id="memberIdBox">
                         <span class="col-3 align-self-center bg-success text-white inputbox">아이디</span>
                         <input  type="text" class="col-8 form-control form-control-lg rounded-0" name="memberId" id="memberId" placeholder="영문 및 숫자 포함" >
-<!--                           <div class="invalid-feedback">
-                              아이디를 입력해주세요.
-						  </div> -->
                     </div>
                     <div class="row p-2 g-col-6 input-group" id="memberPwBox">
                         <span class="col-3 align-self-center bg-success text-white inputbox">비밀번호</span>
                         <input  type="password" class="col-8 form-control form-control-lg rounded-0"  name="memberPw" id="memberPw" placeholder="영문 숫자 필수" >
-<!-- 					      <div class="invalid-feedback">
-					        비밀번호를 입력해주세요.
-					      </div> -->
                     </div>
                     <div class="row p-2 g-col-6 input-group" id="memberNameBox">
                         <span class="col-3 align-self-center bg-success text-white inputbox">이름</span>
                         <input  type="text" class="col-8 form-control form-control-lg rounded-0" style="ime-mode:auto;" name="memberName" id="memberName" placeholder="한글만 가능" >
-<!-- 					      <div class="invalid-feedback">
-					        이름을 입력해주세요.
-					      </div> -->
+
                     </div>
                     <div class="row p-2 g-col-6 input-group" id="memberTelBox">
                         <span class="col-3 align-self-center bg-success text-white inputbox">휴대전화</span>
                         <input  type="text" class="col-8 form-control form-control-lg rounded-0" name="memberTel" id="memberTel" placeholder="010-0000-0000" >
-<!-- 					      <div class="invalid-feedback">
-					       	휴대전화번호를 입력해주세요.
-					      </div> -->
                     </div>
                     
 	                 <div class="row justify-content-end " style="margin-top: 50px;">
@@ -89,7 +78,7 @@
                         
                     alertPlaceholder.append(wrapper);
                   }
-                   
+                //유효성 검사
 				var check = false;
 				var num = /[0-9]/g;
 				var eng = /[a-z]/ig;
@@ -103,7 +92,6 @@
 				
  				if(inputIdVal.trim() == '' || inputPwVal.trim() == '' || inputNameVal.trim() == '' || inputTelVal.trim() == ''){
 						$(".alertmainbox").remove();
-						//console.log('빈칸을 채워주세요!');
 						appendAlert('빈칸을 채워주세요!', 'danger','alertBox');
 						return check;
 				} 

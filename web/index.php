@@ -88,7 +88,13 @@
     <button class="btn btn-primary" type="submit">Submit form</button>
   </div>
 </form>
+<button class="btn btn-primary" type="button" id="test">테스트</button>
 <script>
+<?php 
+if(isset($_POST('test'))){
+	echo $_POST('test');
+}
+?>
 /*
  css and sorting field mark(▼▲).
  */
@@ -149,8 +155,21 @@ function sortTable(cell){
             }
         });
     }
-}
+}			
 
+var test;
+            $(document).on('click', '#test',function(){
+               $.ajax({
+                url : 'index.php',
+                type : 'POST',
+                data : {call_name:'coll', test:test},
+                error : function(){
+                console.log("실패");
+                }, success : function(result){
+                    $("#test").append(result);
+                    }
+                });
+            });
 </script>
     <div id='targetPn' style='width:130px'>
     </div>
