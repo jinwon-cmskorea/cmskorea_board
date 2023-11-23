@@ -31,6 +31,7 @@ var_dump($rows);
 echo "</pre>";
  */
 
+//페이징 기능
 function pagination($list, $page, $count){
 	/* paging : 전체 페이지 수 = 전체 데이터 / 페이지당 데이터 개수, ceil : 올림값, floor : 내림값, round : 반올림 */
 	$total_page = ceil($count / $list);
@@ -68,7 +69,7 @@ function pagination($list, $page, $count){
 	echo json_encode($data);
 }
 
-
+//데이터 정보에 맞게 출력하기
 function page_data_list($row, $var, $order_name, $order_sort ,$start_list, $last_list){
 	$query = "";
 	if(isset($row) && isset($var) && isset($order_name) && isset($order_sort)){
@@ -82,7 +83,6 @@ function page_data_list($row, $var, $order_name, $order_sort ,$start_list, $last
 	}
 	$result = mysqli_query(connetDB(), $query);
 	$rows = array();
-	
 	while(!!($row = mysqli_fetch_assoc($result))) {
 		$rows[] = $row;
 	}
@@ -110,11 +110,11 @@ if(isset($_GET['call_name'])){
 	$order_name = isset($_GET['order_name'])? $_GET['order_name'] : null;
 	$order_sort = isset($_GET['order_sort'])? $_GET['order_sort'] : null;
 	
-	if ($searchTag === "undefined" && $searchInput === "undefined"){
+	if ($searchTag === "undefined" || $searchInput === "undefined"){
 		$searchTag = null;
 		$searchInput = null;
 	}
-	if ($order_name === "undefined" && $order_sort === "undefined"){
+	if ($order_name === "undefined" || $order_sort === "undefined"){
 		$order_name = null;
 		$order_sort = null;
 	}
@@ -127,5 +127,5 @@ if(isset($_GET['call_name'])){
 			page_data_list($searchTag, urldecode($searchInput), $order_name ,$order_sort ,$start, $list_num);
 			break;
 	}
-}
+}else{echo "전달 받은 값이 없습니다!";}
 ?>

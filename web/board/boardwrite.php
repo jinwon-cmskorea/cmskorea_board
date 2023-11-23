@@ -5,20 +5,7 @@
         <script type="text/javascript" src="../../jQuery/jquery-3.6.3.min.js"></script>
         <link href="../../bootstrap-5.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="../../bootstrap-5.3.1-dist/js/bootstrap.min.js"></script>
-        <style type="text/css">
-            .labelbox{
-                background-color: lightgray; 
-                border: none; 
-                width: 100px; 
-                height: 30px;
-                line-height: 30px;
-            }
-            .inputwritebox{
-                border: solid 1px lightgray;  
-                height: 30px;
-                line-height: 30px;
-            }
-        </style>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css">
         <title>작성 페이지</title>
     </head>
     <body>
@@ -28,17 +15,17 @@
     }
     
     ?>
-        <div class="container border border-secondary" style="height: 920px;">
+        <div class="container border border-secondary listcontainer">
             <div class="header-include"></div>
             <?php
 			include 'boardheader.php';
 			?>
             <div style="margin: 15px;">
                 <div class=" text-start" style="margin-bottom: 15px;">
-                    <span class="fs-5" style="color: #595959; font-weight:bold">씨엠에스코리아 게시판</span>
-                    <span class="text-primary text-opacity-75" style="font-size: small; font-weight:bold">- 작성 -</span>
+                    <span class="fs-5 pagetitle">씨엠에스코리아 게시판</span>
+                    <span class="text-primary text-opacity-75 pagedescription">- 작성 -</span>
                 </div>
-                <div class="border rounded  border-dark-subtle align-self-center" style="height: 65px; padding: 8px; margin-bottom: 30px; line-height: 48px;">
+                <div class="border rounded  border-dark-subtle align-self-center descriptionlinebox">
                     <p>게시판 글을 작성합니다.</p>
                 </div>
                 <div class="p-4">
@@ -59,7 +46,7 @@
                             <div class="labelbox  text-center col-1 mx-5 my-2">
                                 <span class="text-white">작성자</span>
                             </div>
-                            <input type="text" class="col-2 inputwritebox align-self-center" id="writer" value="<?php echo $_SESSION['userName'] ?>" >
+                            <input type="text" class="col-2 inputwritebox align-self-center" id="writer"  readonly  value="<?php echo $_SESSION['userName'] ?>" >
                         </div>
                     </div>
                     <div class="mx-5 row">
@@ -93,13 +80,13 @@
 
                 if(!writeTitle){
 	 				$(".alertmainbox").remove();
-		            appendAlert('제목을 입력해 주세요!', 'danger','alertBox');
+		            appendAlert('&#9888;제목을 입력해 주세요!', 'danger','alertBox');
                 }else if(!writeContent){
                 	$(".alertmainbox").remove();
-                	appendAlert('내용을 입력해 주세요!', 'danger','alertBox');
+                	appendAlert('&#9888;내용을 입력해 주세요!', 'danger','alertBox');
                 }else if(!writer){
                 	$(".alertmainbox").remove();
-                	appendAlert('작성자를 입력해 주세요!', 'danger','alertBox');
+                	appendAlert('&#9888;작성자를 입력해 주세요!', 'danger','alertBox');
                 }else{
 	                $.ajax({
 	                    url : '../../php/board.php',
@@ -108,8 +95,12 @@
 	                    error : function(){
 	                    console.log("실패");
 	                    }, success : function(result){
-		                    	$("#alertBox").append(result);
-		                        location.href = 'boardlist.php'; 
+	                    		if(!result){
+		                        	location.href = 'boardlist.php'; 
+		                        }else{
+		                        	$(".alertmainbox").remove();
+		                        	appendAlert('&#9888;게시글 등록에 실패했습니다!', 'danger','alertBox');
+		                        }
 	                        }
 	                    });
                 }

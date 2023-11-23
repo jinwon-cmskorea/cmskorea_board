@@ -5,16 +5,11 @@
         <script type="text/javascript" src="../jQuery/jquery-3.6.3.min.js"></script>
         <link href="../bootstrap-5.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="../bootstrap-5.3.1-dist/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../css/main.css" type="text/css">
         <style type="text/css">
             .centerbox{
                 width: 570px;
                 height: 360px;
-                margin:auto;
-                padding: 30px;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
             }
         </style>
         <title>로그인 페이지</title>
@@ -23,7 +18,7 @@
         <div class="container">
             <div  class="text-center centerbox bg-secondary-subtle">
                 <div>
-                    <h4 style="color: #595959; font-weight:bold">CMSKOREA Board</h4>
+                    <h4 class="pagetitle">CMSKOREA Board</h4>
                     <hr/>
                     <p class="text-secondary ">아이디 / 비밀번호를 입력하여 주세요.</p>
                 </div>
@@ -52,6 +47,7 @@
         </div>
         <script>
            		function checkForm() {
+           		//경고문 (input 입력)
 					const appendAlert = (message, type, id) => {
 	                 const alertPlaceholder = document.getElementById(id);
 	                 const wrapper = document.createElement('div');
@@ -70,11 +66,11 @@
 		                
 					if(!loginName){
 			 			$(".alertmainbox").remove();
-			            appendAlert('아이디를 입력해 주세요!', 'danger','alertBox');
+			            appendAlert('&#9888;아이디를 입력해 주세요!', 'danger','alertBox');
 			            return check;
 	                }else if(!loginPassword){
 	                	$(".alertmainbox").remove();
-	                	appendAlert('비밀번호를 입력해 주세요!', 'danger','alertBox');
+	                	appendAlert('&#9888;비밀번호를 입력해 주세요!', 'danger','alertBox');
 	                	return check;
 	                }else{
 	                	check = true;
@@ -82,6 +78,7 @@
             	return check;
             	}
              $(document).ready(function(){
+             	$('#name').focus();
                 $(document).on('click', '#signupHTML',function(){
                    location.href = 'signup.php'; 
                 });

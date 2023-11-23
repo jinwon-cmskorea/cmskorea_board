@@ -32,13 +32,10 @@ function write_post(){
 	$memberPk = mysqli_num_rows(mysqli_query(connetDB(), $find));
 	if($memberPk){
 		$query = "INSERT INTO board ( memberPk, title, writer, content, insertTime, updateTime) VALUE( ". $memberPk." ,'". $writeTitle."' ,'". $writer ."', '" . $writeContent . "' , now(), now());";
-		
-		$rs = mysqli_query(connetDB(), $query);
-		if (!$rs) {
-			echo "등록실패 : " . mysqli_error(connetDB());
-		}
+		$_SESSION['alert'] = 'write';
+		mysqli_query(connetDB(), $query);
 	}else{
-		echo "게시글 등록에 실패했습니다.";
+		return false;
 	}
 }
 function view_post(){
@@ -63,8 +60,10 @@ function update_post(){
 	//echo $query;
 	$rs = mysqli_query(connetDB(), $query);
 	
-	if (!$rs) {
+	if(!$rs) {
 		echo "등록실패 : " . mysqli_error(connetDB());
+	}else {
+		$_SESSION['alert'] = 'edit';
 	}
 }
 
@@ -78,24 +77,24 @@ function delete_post(){
 		echo "등록실패 : " . mysqli_error(connetDB());
 	}
 }
+if(isset($_POST['call_name'])){
 $call_name = $_POST['call_name'];
-switch ($call_name){
-	case  "set_board":
-		set_board();
-		break;
-	case  "write_post":
-		write_post();
-		$_SESSION['alert'] = 'write';
-		break;
-	case  "view_post":
-		view_post();
-		 break;
-	case  "update_post":
-		update_post();
-		$_SESSION['alert'] = 'edit';
-		 break;
-	case  "delete_post":
-		delete_post();
-		break; 
-}
+	switch ($call_name){
+		case  "set_board":
+			set_board();
+			break;
+		case  "write_post":
+			write_post();
+			break;
+		case  "view_post":
+			view_post();
+			 break;
+		case  "update_post":
+			update_post();
+			 break;
+		case  "delete_post":
+			delete_post();
+			break; 
+	}
+}else{echo "전달 받은 값이 없습니다!";}
 ?>

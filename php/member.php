@@ -25,6 +25,7 @@ function insert_member(){
 		echo("<script>location.replace('../web/login.php');</script>");
 	}
 }
-
-insert_member();
+if(isset($_POST['memberId']) && isset($_POST['memberPw']) && isset($_POST['memberName']) && isset($_POST['memberTel'])){
+	insert_member();
+}else{echo "전달 받은 값이 없습니다!";}
 ?>

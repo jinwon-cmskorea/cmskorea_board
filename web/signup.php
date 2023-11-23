@@ -5,24 +5,11 @@
         <script type="text/javascript" src="../jQuery/jquery-3.6.3.min.js"></script>
         <link href="../bootstrap-5.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="../bootstrap-5.3.1-dist/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../css/main.css" type="text/css">
         <style type="text/css">
             .centerbox{
                 width: 500px;
-                height: 600px;
-                margin:auto;
-                padding: 30px;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-            }
-            .inputbox{
-                width: 23%;
-                height: 50px;
-                margin-right: 40px;
-                text-align: center;
-                align-items: center;
-                line-height: 50px;
+                height: 570px;
             }
         </style>
         <title>회원가입 페이지</title>
@@ -37,27 +24,27 @@
                 <br/>
                 <form class="text-start grid gap-3 " action="../php/member.php" onsubmit="return checkForm();" method="post" id="signupForm"><!-- needs-validation" novalidate -->
                     <div class="row p-2 g-col-6 input-group" id="memberIdBox">
-                        <span class="col-3 align-self-center bg-success text-white inputbox">아이디</span>
-                        <input  type="text" class="col-8 form-control form-control-lg rounded-0" name="memberId" id="memberId" placeholder="영문 및 숫자 포함" >
+                        <span class="col-3 align-self-center bg-success text-white inputsignupbox">아이디</span>
+                        <input  type="text" class="col-8 form-control form-control-lg rounded-0" name="memberId" id="memberId" placeholder="영문 숫자 포함" >
                     </div>
                     <div class="row p-2 g-col-6 input-group" id="memberPwBox">
-                        <span class="col-3 align-self-center bg-success text-white inputbox">비밀번호</span>
+                        <span class="col-3 align-self-center bg-success text-white inputsignupbox">비밀번호</span>
                         <input  type="password" class="col-8 form-control form-control-lg rounded-0"  name="memberPw" id="memberPw" placeholder="영문 숫자 필수" >
                     </div>
                     <div class="row p-2 g-col-6 input-group" id="memberNameBox">
-                        <span class="col-3 align-self-center bg-success text-white inputbox">이름</span>
+                        <span class="col-3 align-self-center bg-success text-white inputsignupbox">이름</span>
                         <input  type="text" class="col-8 form-control form-control-lg rounded-0" style="ime-mode:auto;" name="memberName" id="memberName" placeholder="한글만 가능" >
 
                     </div>
                     <div class="row p-2 g-col-6 input-group" id="memberTelBox">
-                        <span class="col-3 align-self-center bg-success text-white inputbox">휴대전화</span>
+                        <span class="col-3 align-self-center bg-success text-white inputsignupbox">휴대전화</span>
                         <input  type="text" class="col-8 form-control form-control-lg rounded-0" name="memberTel" id="memberTel" placeholder="010-0000-0000" >
                     </div>
                     
-	                 <div class="row justify-content-end " style="margin-top: 50px;">
+	                 <div class="row justify-content-end mt-5">
 	                    <div class="col-5 "></div>
-	                    <button type="submit" class="btn btn-warning text-light col-2 rounded-0" style="margin-right: 20px;" id="signupButton">가입</button>
-	                    <button type="button" class="btn btn-secondary col-2 rounded-0 border border-2 border-dark" style="margin-right: 40px;" id="backHTML">취소</button>
+	                    <button type="submit" class="btn btn-warning text-light col-2 rounded-0 me-3" id="signupButton">가입</button>
+	                    <button type="button" class="btn btn-secondary col-2 rounded-0 border border-2 border-dark me-5" id="backHTML">취소</button>
 	                </div>
                 </form>
                 <div class="text-start" id="alertBox"></div>
@@ -92,39 +79,44 @@
 				
  				if(inputIdVal.trim() == '' || inputPwVal.trim() == '' || inputNameVal.trim() == '' || inputTelVal.trim() == ''){
 						$(".alertmainbox").remove();
-						appendAlert('빈칸을 채워주세요!', 'danger','alertBox');
+						appendAlert('&#9888;빈칸을 채워주세요!', 'danger','alertBox');
 						return check;
 				} 
  				else if(inputIdVal.search(num) < 0 && inputIdVal.search(eng) < 0){
  					$(".alertmainbox").remove();
-	                appendAlert('영문 또는 숫자가 입력되어야합니다!', 'danger','memberIdBox');
+	                appendAlert('&#9888;영문 또는 숫자가 포함되어야합니다!', 'danger','memberIdBox');
 	                return check;
 				} 
  				else if(inputPwVal.search(num) < 0 || inputPwVal.search(eng) < 0){
  					$(".alertmainbox").remove();
-	                appendAlert('영문 및 숫자가 필수입니다!', 'danger','memberPwBox');
+	                appendAlert('&#9888;영문 및 숫자가 필수입니다!', 'danger','memberPwBox');
 	                return check;
 				} 
  				else if(regexpName.test(inputNameVal)){
  					$(".alertmainbox").remove();
-	                appendAlert('한글만 입력 가능합니다!', 'danger','memberNameBox');
+	                appendAlert('&#9888;한글만 입력 가능합니다!', 'danger','memberNameBox');
 	                return check;
 				} 
  				else if(!(regexpTel.test(inputTelVal))){
  					$(".alertmainbox").remove();
-	                appendAlert('휴대전화 형식으로 입력해야 합니다!', 'danger','memberTelBox');
+	                appendAlert('&#9888;휴대전화 형식으로 입력해야 합니다!', 'danger','memberTelBox');
 	                return check;
 				} 
 				check = true;
 				return check;
 			}
             $(document).ready(function(){
+            		//전화번호 자동 값 입력(010-)
+                    $("#memberTel").focus(function(){
+                    	if(!$(this).val()){
+                    		$(this).val("010-");
+                    	}
+                    });
                     
                     $(document).on('click', 'body div.container #alertclose', function(){
                         $("#alertmain").remove();
                     });
                     
-				
                 $(document).on('click', '#backHTML',function(){
                    location.href = 'login.php'; 
                 });

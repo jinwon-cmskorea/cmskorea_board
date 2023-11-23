@@ -5,28 +5,7 @@
         <script type="text/javascript" src="../../jQuery/jquery-3.6.3.min.js"></script>
         <link href="../../bootstrap-5.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="../../bootstrap-5.3.1-dist/js/bootstrap.min.js"></script>
-        <style type="text/css">
-            .page-link{
-              color: #000; 
-              background-color: #fff;
-              border: 1px solid #ccc; 
-            }
-            
-            .page-item.active .page-link {
-             z-index: 1;
-             color: #555;
-             font-weight:bold;
-             background-color: #f1f1f1;
-             border-color: #ccc;
-             
-            }
-            
-            .page-link:focus, .page-link:hover {
-              color: #000;
-              background-color: #fafafa; 
-              border-color: #ccc;
-            }
-        </style>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css">
         <title>리스트 페이지</title>
     </head>
     <body>
@@ -40,36 +19,36 @@
     	echo("<script>location.replace('../login.php');</script>");
     }
     ?>
-        <div class="container border border-secondary" style="height: 920px;">
+        <div class="container border border-secondary listcontainer">
             <div class="header-include"></div>
             <?php
 			include 'boardheader.php';
 			?>
             <div style="margin: 15px;">
                 <div class=" text-start" style="margin-bottom: 15px;">
-                    <span class="fs-5" style="color: #595959; font-weight:bold">씨엠에스코리아 게시판</span>
-                    <span class="text-primary text-opacity-75" style="font-size: small; font-weight:bold">- 리스트 -</span>
+                    <span class="fs-5 pagetitle">씨엠에스코리아 게시판</span>
+                    <span class="text-primary text-opacity-75 pagedescription">- 리스트 -</span>
                 </div>
-                <div class="border rounded  border-dark-subtle align-self-center" style="height: 65px; padding: 8px; margin-bottom: 30px;">
+                <div class="border rounded  border-dark-subtle align-self-center descriptionbox">
                     <p>등록 된 게시글을 조회하는 페이지입니다.<br>
                     등록 된 글은 조회, 수정 및 삭제 할 수 있습니다.</p>
                 </div>
                 <div>
                     <div>
                         <div class="row justify-content-between" style="height: 30px; margin-bottom: 10px;">
-                            <div class="col-8">
-                                <select class="text-white text-center" name="searchSelectBox" id="searchSelectBox" style="background-color: lightgray; border: none; width: 120px; height: 30px;">
+                            <div class="col-6">
+                                <select class="text-white text-center" name="searchSelectBox" id="searchSelectBox">
                                     <option value="writer">작성자</option>
                                     <option value="title">제목</option>
                                     <option value="insertTime">작성일자</option>
                                 </select>
-                                <input  type="text" style="border: 1px solid lightgray;" id="searchBar" >
+                                <input  type="text" style="border: 1px solid lightgray;" id="searchBar" placeholder="검색어를 입력해주세요.">
                                 <button class="btn btn-primary" id="searchButton">검색</button>
                             </div>
+                            <div id="alertBox" class="col-3"></div>
                             <button class="btn btn-primary col-1" id="boardWrite">작성</button>
                         </div>
                         <div>
-                            
                             <table class="table" style="border-top: 1px solid lightgray;" id="boardTable" >
                                 <thead>
 	                                <tr>
@@ -94,8 +73,20 @@
            <!-- <div ><a id="test">테스트</a></div> -->
         </div>
     <script>
-    
         $(document).ready(function () {
+        //삭제 경고창
+        const appendDelete = (message, id) => {
+        	const DeletePlaceholder = document.getElementById(id);
+        	const Deletewrapper = document.createElement('div')
+            Deletewrapper.innerHTML = [
+            	`<div class="border border-danger border-2 rounded bg-danger-subtle text-dark p-2 alertDelete" style="position: absolute" id="alertDelete">`,
+                `   <div id="deletewrapperpk">${message}</div>`,
+                '   <button type="button" id="DeleteCompleteClose" class="btn btn-danger DeleteCompleteClose">삭제</button>',
+                '   <button type="button" id="DeleteClose" class="btn btn-secondary DeleteClose">취소</button>',
+                '</div>'
+                ].join('')
+            DeletePlaceholder.append(Deletewrapper)
+        }
         //get parameter 가져오기
         const urlParams = window.location.search;
 		function getParams(){
@@ -117,16 +108,15 @@
         var searchInput = params['searchInput'];
         var orderName = params['orderName'];
         var sort = params['sort'];
+        
         var pagecheck = false;
         if(page == undefined){
         	page = 1;
         }
-			/* console.log(page);
-        	console.log(searchTag);
-        	console.log(searchInput);
-        	console.log(orderName);
-        	console.log(sort);  */
-        	
+        	//페이지 새로고침 함수
+        	function reloadpage(){
+        		location.href = "boardlist.php?page=" + page +"&searchTag="+ searchTag +"&searchInput=" + searchInput + "&orderName="+ orderName + "&sort=" + sort;
+        	}
         	//ajax setTable 실행 변수 선언
 	        var ajaxUrl = '../../php/boardpage.php';
 	        var ajaxType = 'GET';
@@ -135,7 +125,7 @@
         	//ajax setTable 실행 함수
          	function ajaxData(callName){
                 $.ajax({
-	                url : '../../php/boardpage.php',
+	                url : ajaxUrl,
 	                type : 'GET',
 	                data : {call_name:callName, page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
                     error : function(){
@@ -161,7 +151,7 @@
 		                var list = JSON.parse(result);
 		                $.each(list, function(index,value){
 		                    var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-		                    var setDelete = "<button type='button' class='btn btn-danger deleteButton'>삭제</button>";
+		                    var setDelete = "<button type='button' class='btn btn-danger deleteButton ms-1'>삭제</button>";
 		                    var innerHTML = "";
 		                    innerHTML += "<tr class='align-middle' >";
 		                    innerHTML += "<th scope='row'>" + value['pk'] + "</th>";
@@ -183,12 +173,21 @@
 					
 				}
 			}
-      		//nav 출력 함수
-      		function navstring (result){
-      		
+      		//page nav 출력 함수
+      		function navstring (pageStartNum, pageEndNum, getTag){
+				innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1"+ getTag + "'>First</a></li>";
+	            $("#pagination").append(innerHTML);
+	            for($print_page = pageStartNum; $print_page <= pageEndNum; $print_page++){
+	                innerHTML = "";
+	                innerHTML += "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + $print_page +  getTag + "'>" + $print_page +"</a></li>";
+	                //console.log(innerHTML);
+	                $("#pagination").append(innerHTML);
+	            }
+	        	innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + pageEndNum + getTag  +"'>Last</a></li>";
+	            $("#pagination").append(innerHTML);
       		}
       		
-        	//메인 함수 호출
+        	//page 메인 함수 호출(게시글 출력)
         	setPageNav();
         	
 	
@@ -230,6 +229,7 @@
             	if(page !==1){
             		pagecheck = true;
             	}
+            	$("#alertBox").empty();
                 searchTag = $("#searchSelectBox").val();
                 searchInput = $("#searchBar").val();
                 setPageNav();
@@ -257,30 +257,15 @@
                         $("#boardTable").children('tbody').empty();
                         var list = JSON.parse(result);
                         var innerHTML = "";
+                        var tag = "";
                         $("#pagingnav").children('ul').empty();
                         if(orderName !== undefined && sort !== undefined){
-	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1&searchTag="+ searchTag +"&searchInput=" + searchInput + "&orderName="+ orderName + "&sort=" + sort + "'>First</a></li>";
-	                        $("#pagination").append(innerHTML);
-	                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
-	                            innerHTML = "";
-	                            innerHTML += "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + $print_page + "&searchTag="+ searchTag +"&searchInput=" + searchInput +"&orderName="+ orderName + "&sort=" + sort +"'>" + $print_page +"</a></li>";
-	                            //console.log(innerHTML);
-	                            $("#pagination").append(innerHTML);
-	                        }
-	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] + "&searchTag="+ searchTag +"&searchInput=" + searchInput + "&orderName="+ orderName + "&sort=" + sort   +"'>Last</a></li>";
-	                        $("#pagination").append(innerHTML);
+                        	tag = "&searchTag="+ searchTag +"&searchInput=" + searchInput + "&orderName="+ orderName + "&sort=" + sort;
+                        	navstring(list[0]['s_pageNum'], list[0]['e_pageNum'], tag);
 	                        sortReTable();
 			        	}else if(orderName == undefined && sort == undefined){
-	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=1&searchTag="+ searchTag +"&searchInput=" + searchInput + "'>First</a></li>";
-	                        $("#pagination").append(innerHTML);
-	                        for($print_page = list[0]['s_pageNum']; $print_page <= list[0]['e_pageNum']; $print_page++){
-	                            innerHTML = "";
-	                            innerHTML += "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + $print_page + "&searchTag="+ searchTag +"&searchInput=" + searchInput + "'>" + $print_page +"</a></li>";
-	                            //console.log(innerHTML);
-	                            $("#pagination").append(innerHTML);
-	                        }
-	                        innerHTML = "<li class='page-item'><a class='page-link' href='boardlist.php?page=" + list[0]['e_pageNum'] +"&searchTag="+ searchTag +"&searchInput=" + searchInput +"'>Last</a></li>";
-	                        $("#pagination").append(innerHTML);
+			        		tag = "&searchTag="+ searchTag +"&searchInput=" + searchInput;
+			        		navstring(list[0]['s_pageNum'], list[0]['e_pageNum'], tag);
 	                        //게시판 검색 목록 set(목록 크기에 맞게 가져오기)
                 			ajaxData('page_data_list');
                         }
@@ -296,20 +281,31 @@
             });
             //게시글 삭제
             $(document).on('click', 'body div.container .deleteButton', function() {
-                var thisRow = $(this).closest('tr'); 
+            	$("#alertBox").empty();
+            	var thisRow = "";
+                thisRow = $(this).closest('tr'); 
                 var deletePk = parseInt(thisRow.find('th').text());
-                
-                $.ajax({
-                url : '../../php/board.php',
-                type : 'POST',
-                data : {call_name:'delete_post', deletePk:deletePk},
-                error : function(){
-                console.log("실패");
-                }, success : function(result){
-                    //$("#test").append(result);
-                    location.reload();
-                    }
-                });
+                appendDelete("&#10071;정말로 " + deletePk  + "번째 제품정보를 삭제하시겠습니까?", 'alertBox');
+                $("#deletewrapperpk").attr("value",deletePk);
+            });
+            $(document).on('click', 'body div.container .DeleteCompleteClose', function() {
+	            deletePk = $("#deletewrapperpk").attr("value");
+	            $.ajax({
+	            url : '../../php/board.php',
+	            type : 'POST',
+	            data : {call_name:'delete_post', deletePk:deletePk},
+	            error : function(){
+	            console.log("실패");
+	            }, success : function(result){
+	                setPageNav();
+	                }
+	            });
+	            $("#alertBox").empty();
+	            reloadpage();
+            });
+            $(document).on('click', 'body div.container .DeleteClose', function() {
+            	$("#alertBox").empty();
+            	reloadpage();
             });
             //게시글 작성
             $(document).on('click', '#boardWrite',function(){

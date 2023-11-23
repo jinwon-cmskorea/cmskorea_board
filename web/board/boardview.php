@@ -5,36 +5,32 @@
         <script type="text/javascript" src="../../jQuery/jquery-3.6.3.min.js"></script>
         <link href="../../bootstrap-5.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="../../bootstrap-5.3.1-dist/js/bootstrap.min.js"></script>
-        <style type="text/css">
-            .contentbox{
-                border-top: 1px dashed lightgray;
-                border-bottom: 1px dashed lightgray;
-            }
-        </style>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css">
         <title>조회 페이지</title>
     </head>
     <body>
-        <div class="container border border-secondary" style="height: 920px;">
+        <div class="container border border-secondary listcontainer" >
             <div class="header-include"></div>
             <?php
 			include 'boardheader.php';
 			?>
             <div style="margin: 15px;">
                 <div class=" text-start" style="margin-bottom: 15px;">
-                    <span class="fs-5" style="color: #595959; font-weight:bold">씨엠에스코리아 게시판</span>
-                    <span class="text-primary text-opacity-75" style="font-size: small; font-weight:bold">- 조회 -</span>
+                    <span class="fs-5 pagetitle">씨엠에스코리아 게시판</span>
+                    <span class="text-primary text-opacity-75 pagedescription">- 조회 -</span>
                 </div>
-                <div class="border rounded  border-dark-subtle align-self-center" style="height: 65px; padding: 8px; margin-bottom: 30px; line-height: 48px;">
+                <div class="border rounded  border-dark-subtle align-self-center descriptionlinebox">
                     <p>게시판 글을 조회합니다.</p>
                 </div>
-                <div>
+                <div class="my-5">
                     <div>
                         <div class="row">
                             <div class="col-8 fs-3" id="boardViewTitle"></div>
                             <span  class="col-1  align-self-center" id="boardViewWriter"></span>
                             <span  class="col-2  align-self-center" id="boardViewTime"></span>
                         </div>
-                        <div class="contentbox p-3" id="boardViewContent">
+                        <div class="contentbox p-3">
+                        	<p id="boardViewContent"></p>
                         </div>
                     </div>
                     <div class="mx-5 mt-4 row">
