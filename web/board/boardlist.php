@@ -117,15 +117,10 @@
         	function reloadpage(){
         		location.href = "boardlist.php?page=" + page +"&searchTag="+ searchTag +"&searchInput=" + searchInput + "&orderName="+ orderName + "&sort=" + sort;
         	}
-        	//ajax setTable 실행 변수 선언
-	        var ajaxUrl = '../../php/boardpage.php';
-	        var ajaxType = 'GET';
-	        var ajaxParamCall = 'page_list';
-	        var ajaxParam = {call_name: ajaxParamCall, page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort}; 
         	//ajax setTable 실행 함수
          	function ajaxData(callName){
                 $.ajax({
-	                url : ajaxUrl,
+	                url : '../../php/boardpage.php',
 	                type : 'GET',
 	                data : {call_name:callName, page: page, searchTag:searchTag ,searchInput: searchInput, order_name:orderName, order_sort:sort},
                     error : function(){
@@ -151,7 +146,7 @@
 		                var list = JSON.parse(result);
 		                $.each(list, function(index,value){
 		                    var setview = "<button type='button' class='btn btn-warning text-white viewButton'>조회</button>";
-		                    var setDelete = "<button type='button' class='btn btn-danger deleteButton ms-1'>삭제</button>";
+		                    var setDelete = "<button type='button' class='btn btn-danger deleteButton ms-2'>삭제</button>";
 		                    var innerHTML = "";
 		                    innerHTML += "<tr class='align-middle' >";
 		                    innerHTML += "<th scope='row'>" + value['pk'] + "</th>";

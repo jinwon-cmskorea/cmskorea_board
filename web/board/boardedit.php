@@ -91,6 +91,7 @@
                 var updateWriter = $('#writer').val();
                 updateContent = updateContent.replaceAll(/(\n|\r\n)/g, "<br>");
                 
+                //input 검사
                 if(!updateTitle){
 	 				$(".alertmainbox").remove();
 		            appendAlert('&#9888;제목을 입력해 주세요!', 'danger','alertBox');

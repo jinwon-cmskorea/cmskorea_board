@@ -12,7 +12,7 @@ function connetDB(){
 	};
 }
 //테이블 유무 체크
-function tableCheck($tableName){
+/* function tableCheck($tableName){
 	$result = mysqli_query(connetDB(), " SHOW tables LIKE '" . $tableName ."' ");
 	switch ($tableName){
 		case "member":
@@ -60,7 +60,7 @@ function tableCheck($tableName){
 			}
 			break;
 	}
-}
+} */
 //데이터 가져오기
 function data_list($table) {
 	$query = "SELECT * FROM " . $table;
@@ -84,19 +84,11 @@ function data_search($table, $searchrow, $row, $var) {
 	$query = "SELECT " . $searchrow . " FROM " . $table . " where " . $row . "='" . $var . "';";
 	$rs = mysqli_query(connetDB(), $query);
 	
-//	$num_record=mysqli_num_rows($rs);
 	$rows = mysqli_fetch_all($rs);
-/* 	echo $query;
- 	echo "<pre>";
-	var_dump($rows);
-	echo "</pre>"; */
-	//return $rows;
-	 
-	
+
 	if (empty($rows))
 		return false;
 	else
 		return $rows[0][0];
 };
-//data_list(connetDB(), "test")
 ?>

@@ -60,8 +60,8 @@
                     }
                 });
             }
+            //메인함수
             setViewData();
-            //$("#container").html('Hi there!');
             
             //수정하기
             $(document).on('click', '#postEdit',function(){

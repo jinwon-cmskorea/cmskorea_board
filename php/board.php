@@ -57,7 +57,6 @@ function update_post(){
 	$updateWriter = $_POST['updateWriter'];
 	
 	$query = "UPDATE board SET title='" . $updateTitle . "', content='"  . $updateContent . "', writer='" . $updateWriter . "', updateTime= now() WHERE pk =". $viewPk .";";
-	//echo $query;
 	$rs = mysqli_query(connetDB(), $query);
 	
 	if(!$rs) {

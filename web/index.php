@@ -90,11 +90,6 @@
 </form>
 <button class="btn btn-primary" type="button" id="test">테스트</button>
 <script>
-<?php 
-if(isset($_POST('test'))){
-	echo $_POST('test');
-}
-?>
 /*
  css and sorting field mark(▼▲).
  */
