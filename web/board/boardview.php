@@ -56,10 +56,24 @@
                         $("#boardViewTitle").html(list['title']);
                         $("#boardViewWriter").html(list['writer']);
                         $("#boardViewTime").html(list['updateTime']);
-                        $("#boardViewContent").html(list['content']);
+                        $("#boardViewContent").html(setContentdata(list['content']));
                     }
                 });
             }
+            //XSS 방지
+            function setContentdata(str){
+			    returnVal = str;
+			    returnVal = returnVal.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+			    returnVal = returnVal.replaceAll("\\(", "&#40;").replaceAll("\\)", "&#41;");
+			    returnVal = returnVal.replaceAll("'", "&#39;");
+			    returnVal = returnVal.replaceAll("eval\\((.*)\\)", "");
+			    returnVal = returnVal.replaceAll("[\\\"\\\'][\\s]*javascript:(.*)[\\\"\\\']", "\"\"");
+			    returnVal = returnVal.replaceAll("script", "");
+			    returnVal = returnVal.replaceAll("iframe", "");
+			    returnVal = returnVal.replaceAll("embed", "");
+			    return returnVal;
+            }
+            
             //메인함수
             setViewData();
             
