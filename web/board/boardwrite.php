@@ -9,12 +9,6 @@
         <title>작성 페이지</title>
     </head>
     <body>
-    <?php 
-    if(!session_id()) {
-    	session_start();
-    }
-    
-    ?>
         <div class="container border border-secondary listcontainer">
             <div class="header-include"></div>
             <?php
@@ -79,23 +73,25 @@
                 var writer = $("#writer").val();
 				//input 검사
                 if(!writeTitle){
-	 				$(".alertmainbox").remove();
+	 				$("#alertBox").empty();
 		            appendAlert('&#9888;제목을 입력해 주세요!', 'danger','alertBox');
                 }else if(!writeContent){
-                	$(".alertmainbox").remove();
+                	$("#alertBox").empty();
                 	appendAlert('&#9888;내용을 입력해 주세요!', 'danger','alertBox');
                 }else if(!writer){
-                	$(".alertmainbox").remove();
+                	$("#alertBox").empty();
                 	appendAlert('&#9888;작성자를 입력해 주세요!', 'danger','alertBox');
                 }else{
 	                $.ajax({
 	                    url : '../../php/board.php',
 	                    type : 'POST',
+	                    dataType : 'text',
 	                    data : {call_name:'write_post', writeTitle:writeTitle, writeContent:writeContent, writer:writer},
 	                    error : function(){
 	                    console.log("실패");
 	                    }, success : function(result){
 	                    		if(!result){
+	                    			alert('새 글이 등록되었습니다');
 		                        	location.href = 'boardlist.php'; 
 		                        }else{
 		                        	$(".alertmainbox").remove();

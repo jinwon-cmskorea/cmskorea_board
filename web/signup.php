@@ -38,7 +38,7 @@
                     </div>
                     <div class="row p-2 g-col-6 input-group" id="memberTelBox">
                         <span class="col-3 align-self-center bg-success text-white inputsignupbox">휴대전화</span>
-                        <input  type="text" class="col-8 form-control form-control-lg rounded-0" name="memberTel" id="memberTel" placeholder="010-0000-0000" >
+                        <input  type="text" class="col-8 form-control form-control-lg rounded-0" name="memberTel" id="memberTel" oninput="autoHyphen(this)" maxlength="13" placeholder="(010)0000-0000 숫자만" >
                     </div>
                     
 	                 <div class="row justify-content-end mt-5">
@@ -56,6 +56,7 @@
               	const appendAlert = (message, type, id) => {
                  const alertPlaceholder = document.getElementById(id);
                  const wrapper = document.createElement('div');
+                 wrapper.className = 'alertdivbox';
                     wrapper.innerHTML = [
                       `<div class="alert alert-${type} alert-dismissible alertmainbox" id="alertmain" >`,
                       `   <div>${message}</div>`,
@@ -78,45 +79,54 @@
 				inputTelVal = $("#memberTel").val();
 				
  				if(inputIdVal.trim() == '' || inputPwVal.trim() == '' || inputNameVal.trim() == '' || inputTelVal.trim() == ''){
-						$(".alertmainbox").remove();
+						$(".alertdivbox").remove();
 						appendAlert('&#9888;빈칸을 채워주세요!', 'danger','alertBox');
 						return check;
 				} 
  				else if(inputIdVal.search(num) < 0 && inputIdVal.search(eng) < 0){
- 					$(".alertmainbox").remove();
+ 					$(".alertdivbox").remove();
 	                appendAlert('&#9888;영문 또는 숫자가 포함되어야합니다!', 'danger','memberIdBox');
 	                return check;
 				} 
  				else if(inputPwVal.search(num) < 0 || inputPwVal.search(eng) < 0){
- 					$(".alertmainbox").remove();
+ 					$(".alertdivbox").remove();
 	                appendAlert('&#9888;영문 및 숫자가 필수입니다!', 'danger','memberPwBox');
 	                return check;
 				} 
  				else if(regexpName.test(inputNameVal)){
- 					$(".alertmainbox").remove();
+ 					$(".alertdivbox").remove();
 	                appendAlert('&#9888;한글만 입력 가능합니다!', 'danger','memberNameBox');
 	                return check;
 				} 
  				else if(!(regexpTel.test(inputTelVal))){
- 					$(".alertmainbox").remove();
+ 					$(".alertdivbox").remove();
 	                appendAlert('&#9888;휴대전화 형식으로 입력해야 합니다!', 'danger','memberTelBox');
 	                return check;
 				} 
 				check = true;
 				return check;
 			}
+			//전화번호 필터링
+			const autoHyphen = (target) => {
+				 target.value = target.value
+				.replace(/[^0-9]/g, '')
+				  .replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
+				}
             $(document).ready(function(){
-            		//전화번호 자동 값 입력(010-)
-                    $("#memberTel").focus(function(){
-                    	if(!$(this).val()){
-                    		$(this).val("010-");
-                    	}
-                    });
-                    
-                    $(document).on('click', 'body div.container #alertclose', function(){
-                        $("#alertmain").remove();
-                    });
-                    
+            	//전화번호 자동 값 입력(010-)
+                $("#memberTel").focus(function(){
+                	if(!$(this).val()){
+                		$(this).val("010");
+                	}
+                });
+                $(document).on('click', 'body div.container #alertclose', function(){
+                    $(".alertdivbox").remove();
+                });
+                
+                $(document).on('focus', '.form-control',function(){
+					$(".alertdivbox").remove();
+                })
+                
                 $(document).on('click', '#backHTML',function(){
                    location.href = 'login.php'; 
                 });

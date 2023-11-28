@@ -57,7 +57,6 @@
 	                      '   <button type="button" id="alertclose" class="btn-close close" data-bs-dismiss="alert"></button>',
 	                      '</div>'
 	                    ].join('')
-	                        
 	                    alertPlaceholder.append(wrapper);
 	                  } ;
 	                var check = false;
@@ -65,11 +64,11 @@
 		            var loginPassword = $("#password").val();
 		                
 					if(!loginName){
-			 			$(".alertmainbox").remove();
+			 			$("#alertBox").empty();
 			            appendAlert('&#9888;아이디를 입력해 주세요!', 'danger','alertBox');
 			            return check;
 	                }else if(!loginPassword){
-	                	$(".alertmainbox").remove();
+	                	$("#alertBox").empty();
 	                	appendAlert('&#9888;비밀번호를 입력해 주세요!', 'danger','alertBox');
 	                	return check;
 	                }else{
@@ -79,6 +78,11 @@
             	}
              $(document).ready(function(){
              	$('#name').focus();
+             	
+             	//input focus 경고문 삭제
+             	$(document).on('focus', '.form-control',function(){
+					$("#alertBox").empty();
+                })
                 $(document).on('click', '#signupHTML',function(){
                    location.href = 'signup.php'; 
                 });

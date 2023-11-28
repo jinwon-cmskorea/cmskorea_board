@@ -72,14 +72,14 @@
                 $.ajax({
                     url : '../../php/board.php',
                     type : 'POST',
+                    dataType : 'json',
                     data : {call_name:'view_post', viewPk:viewPk},
                     error : function(){
                         console.log("실패");
                     }, success : function(result){
-                        var list = JSON.parse(result);
-                        $('#editTitle').val(list['title']);
-                        $('#editContent').val(list['content'].replaceAll("<br>","\n"));
-                        $('#writer').val(list['writer']);
+                        $('#editTitle').val(result['title']);
+                        $('#editContent').val(result['content'].replaceAll("<br>","\n"));
+                        $('#writer').val(result['writer']);
                     }
                 });
             }
@@ -93,24 +93,26 @@
                 
                 //input 검사
                 if(!updateTitle){
-	 				$(".alertmainbox").remove();
+	 				$("#alertBox").empty();
 		            appendAlert('&#9888;제목을 입력해 주세요!', 'danger','alertBox');
                 }else if(!updateContent){
-                	$(".alertmainbox").remove();
+                	$("#alertBox").empty();
                 	appendAlert('&#9888;내용을 입력해 주세요!', 'danger','alertBox');
                 }else if(!updateWriter){
-                	$(".alertmainbox").remove();
+                	$("#alertBox").empty();
                 	appendAlert('&#9888;작성자를 입력해 주세요!', 'danger','alertBox');
                 }else{
 	                $.ajax({
 	                    url : '../../php/board.php',
 	                    type : 'POST',
+	                    dataType : 'text',
 	                    data : {call_name:'update_post', viewPk:viewPk, updateTitle:updateTitle, updateContent:updateContent, updateWriter:updateWriter},
 	                    error : function(){
 	                    console.log("실패");
 	                    }, success : function(result){
 	                    console.log(result);
 	                    	if(!result){
+		                    	alert('글이 수정되었습니다');
 		                    	location.href = "boardview.php?"+viewPk;
 		                    }else{
 		                    	$(".alertmainbox").remove();

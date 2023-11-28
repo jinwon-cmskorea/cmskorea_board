@@ -1,6 +1,6 @@
 <?php
 
-include 'dbsql/dbconn.php';
+require_once "../dbcontroller.php";
 
 function insert_member(){
 	$inputId = $_POST['memberId'];
@@ -8,19 +8,20 @@ function insert_member(){
 	$inputName = $_POST['memberName'];
 	$inputTel = $_POST['memberTel'];
 	
-    //$binary = bin2hex($inputPw);
-    //$normal = $inputPw;
-	$searchId =data_search( "member", "id","id", $inputId);
+	$memberDBclass = new DBconn();
+	$searchId = $memberDBclass->data_search( "member", "id","id", $inputId);
 	if($searchId){
-		echo( "<script>alert('중복된 아이디입니다! 다시 작성해주세요.');</script>");
-		echo("<script>location.replace('../web/signup.php');</script>");
+		echo "<script>
+				alert('중복된 아이디입니다! 다시 작성해주세요.');
+				location.replace('../web/signup.php');
+			</script>";
 	}else{
-		$query = "INSERT INTO member ( id, name, telNumber, insertTime, updateTime) VALUE( '". $inputId."' ,'". $inputName."' ,'". $inputTel."' , now(), now());";
-		mysqli_query(connetDB(), $query);
-		$query = "INSERT INTO auth_identity ( id, pw, name, insertTime) VALUE( '". $inputId ."' ,'". md5($inputPw) ."' ,'". $inputName."' , now());";
-		mysqli_query(connetDB(), $query);
-		echo( "<script>alert('회원 가입이 완료되었습니다!');</script>");
-		echo("<script>location.replace('../web/login.php');</script>");
+		$memberDBclass->getDbInsert("member", "(id, name, telNumber, insertTime, updateTime)", "( '". $inputId."' ,'". $inputName."' ,'". $inputTel."' , now(), now())");
+		$memberDBclass->getDbInsert("auth_identity", "(id, pw, name, insertTime)", "( '". $inputId ."' ,'". md5($inputPw) ."' ,'". $inputName."' , now())");
+		echo "<script>
+				alert('회원 가입이 완료되었습니다!');
+				location.replace('../web/login.php');
+			</script>";
 	}
 }
 if(isset($_POST['memberId']) && isset($_POST['memberPw']) && isset($_POST['memberName']) && isset($_POST['memberTel'])){

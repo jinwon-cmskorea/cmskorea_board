@@ -35,9 +35,6 @@
         </div>
         <script>
             $(document).ready(function(){
-                //$("#loginForm").submit(function(){
-                //   location.href = 'board/boardlist.php'; 
-                //});
                 $(document).on('click', '#home',function(){
                    location.href = 'login.php'; 
                 });

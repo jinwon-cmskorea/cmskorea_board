@@ -1,15 +1,4 @@
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script type="text/javascript" src="../../jQuery/jquery-3.6.3.min.js"></script>
-        <link href="../../bootstrap-5.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
-        <script src="../../bootstrap-5.3.1-dist/js/bootstrap.min.js"></script>
-        <link rel="stylesheet" href="../../css/main.css" type="text/css">
-        <title>리스트 페이지</title>
-    </head>
-    <body>
-    <?php 
+<?php 
     if(!session_id()) {
     	session_start();
     }
@@ -52,9 +41,47 @@
     //데이터개수
     $list_num = 10;
     //페이지수
-    $page_num = 5;
+    $page_num = 10;
     
-    ?>
+    //쿼리 사용 데이터 가져오기
+    $table = "board";
+    $dblist = $DBclass->page_data_list($table, $searchTag, $searchInput, "*", $orderName, $sort, (($page-1)*$list_num), $list_num);
+    if(isset($searchTag)&&isset($searchInput)){
+    	//검색 결과 전체 페이지 수
+    	$total_page = ceil($DBclass->getDbRows($table,$searchTag, $searchInput) / $list_num);
+    }else{
+    	//전체 페이지 수
+    	$total_page = ceil($DBclass->getDbAllRows($table) / $list_num);
+    }
+
+    //전체 블럭 수
+    $total_block = ceil($total_page / $page_num);
+    //현재 페이지 번호
+    $now_block = ceil($page / $page_num);
+    //블럭 당 시작 페이지 번호
+    $s_pageNum = ($now_block - 1) * $page_num + 1;
+    // 데이터가 0개인 경우
+    if($s_pageNum <= 0){
+    	$s_pageNum = 1;
+    };
+    //블럭 당 마지막 페이지 번호
+    $e_pageNum = $now_block *  $page_num ;
+    // 마지막 번호가 전체 페이지 수를 넘지 않도록
+    if($e_pageNum > $total_page){
+    	$e_pageNum = $total_page;
+    };
+?>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script type="text/javascript" src="../../jQuery/jquery-3.6.3.min.js"></script>
+        <link href="../../bootstrap-5.3.1-dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="../../bootstrap-5.3.1-dist/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css">
+        <title>리스트 페이지</title>
+    </head>
+    <body>
         <div class="container border border-secondary listcontainer">
             <div class="header-include"></div>
             <?php
@@ -90,7 +117,7 @@
                             <table class="table" style="border-top: 1px solid lightgray;" id="boardTable" >
                                 <thead>
 	                                <tr>
-	                                    <th class="col-1" id="boardPk" value="pk" onClick="sortcheck('pk')">번호</th>
+	                                    <th class="col-1" id="boardPk" value="pk"  onClick="sortcheck('pk')">번호</th>
 	                                    <th class="col-6 text-center" id="boardTitle" value="title" onClick="sortcheck('title')">제목</th>
 	                                    <th class="col-1" id="boardWriter" value="writer" onClick="sortcheck('writer')">작성자</th>
 	                                    <th class="col-1" id="boardInsertTime" value="insertTime" onClick="sortcheck('insertTime')">작성일자</th>
@@ -99,18 +126,13 @@
                                 </thead>
                                 <tbody>
                                 <?php 
+                                //테이블 출력
                                 try{
-                                	
-                                
-	                                $table = "board";
-	                                $dblist = $DBclass->page_data_list($table, $searchTag, $searchInput, "*", $orderName, $sort, (($page-1)*$list_num), $list_num);
-	                                if(isset($searchTag)&&isset($searchInput)){
-	                                	$total_page = ceil($DBclass->getDbRows($table,$searchTag, $searchInput) / $list_num);
-	                                }else{
-	                                	
-	                                	$total_page = ceil($DBclass->getDbAllRows($table) / $list_num);
-	                                }
-	                                //결과 계산
+                                	//query 결과 검사
+                                	if(is_string($dblist))
+                                	{
+                                		throw new Exception($dblist);
+                                	}
 	                                if(isset($searchTag)&&isset($searchInput) && $total_page == 0){
 	                                	
 	                                	?><tr class='align-middle' >
@@ -119,64 +141,38 @@
 	                                		</tr>
 	                                	<?php 
 	                                }else{
-	                                	foreach($dblist as $value ) {
-	                                		?>  
-							                    <tr class='align-middle' >
-							                    <th scope='row'><?php echo $value["pk"];?></th>
-							                    <td><?php echo $value["title"];?></td>
-							                    <td><?php echo $value["writer"];?></td>
-							                    <td><?php echo substr($value["insertTime"],0,10);?></td>
-							                    <td><button type='button' class='btn btn-warning text-white viewButton'>조회</button>
-							                    <button type='button' class='btn btn-danger deleteButton ms-1'>삭제</button></td>
-							                    </tr>
-							            <?php
-	                                	}}
-                                }catch(Exception $e){?>
+	                                	foreach($dblist as $value ) { ?>  
+							                <tr class='align-middle' >
+							                <th scope='row'><?php echo $value["pk"];?></th>
+							                <td><?php echo $value["title"];?></td>
+							                <td><?php echo $value["writer"];?></td>
+							                <td><?php echo substr($value["insertTime"],0,10);?></td>
+							                <td><button type='button' class='btn btn-warning text-white viewButton'>조회</button>
+							                <button type='button' class='btn btn-danger deleteButton ms-1'>삭제</button></td>
+							                </tr>
+							        <?php }?>
+		                                </tbody>
+		                            </table>
+		                        </div>
+		                            <nav aria-label="Page navigation example" id="pagingnav">
+		                              <ul class="pagination justify-content-center" id="pagination">
+		                              		<li class='page-item'><a class='page-link' href='boardlist.php?page=1&searchTag=<?php echo $searchTag; ?>&searchInput=<?php echo $searchInput ?>&orderName=<?php echo $orderName; ?>&sort=<?php echo $sort ?>'>First</a></li>
+										    <?php
+										    /* pager : 페이지 번호 출력 */
+										    for($print_page = $s_pageNum; $print_page <= $e_pageNum; $print_page++){
+										    ?>
+										    <li class='page-item'><a class='page-link' href="boardlist.php?page=<?php echo $print_page; ?>&searchTag=<?php echo $searchTag;?>&searchInput=<?php echo $searchInput ?>&orderName=<?php echo $orderName; ?>&sort=<?php echo $sort ?>"><?php echo $print_page; ?></a></li>
+										    <?php };?>
+										    
+										    <li class='page-item'><a class='page-link' href='boardlist.php?page=<?php echo $e_pageNum; ?>&searchTag=<?php echo $searchTag;?>&searchInput=<?php echo $searchInput ?>&orderName=<?php echo $orderName; ?>&sort=<?php echo $sort ?>'>Last</a></li>
+		                              </ul>
+		                            </nav>
+	                                <?php }
+                                }catch(Exception $e){
+                                	$m = $e->getMessage()?>
                                 	<tr><td class='align-middle text-center fs-3 fw-bold py-4' colspan='5'>게시글 리스트를 불러오기 실패했습니다!</td></tr>
-                                	<tr><td class='align-middle text-center py-2' colspan='5'>오류내용 : " + <?php echo $e ?> + "</td></tr>
-                                <?php
-                                }
-                                	
-                                	?>
-                                
-                                
-                                
-                                </tbody>
-                            </table>
-                        </div>
-                            <nav aria-label="Page navigation example" id="pagingnav">
-                              <ul class="pagination justify-content-center" id="pagination">
-                              	<?php 
-                              	//전체 페이지 수
-                              	//$total_page = ceil($DBclass->getDbAllRows($table) / $list_num);
-                              	//전체 블럭 수
-                              	$total_block = ceil($total_page / $page_num);
-                              	//현재 페이지 번호
-                              	$now_block = ceil($page / $page_num);
-                              	//블럭 당 시작 페이지 번호
-                              	$s_pageNum = ($now_block - 1) * $page_num + 1;
-                              	// 데이터가 0개인 경우
-                              	if($s_pageNum <= 0){
-                              		$s_pageNum = 1;
-                              	};
-                              	//블럭 당 마지막 페이지 번호
-                              	$e_pageNum = $now_block *  $page_num ;
-                              	// 마지막 번호가 전체 페이지 수를 넘지 않도록
-                              	if($e_pageNum > $total_page){
-                              		$e_pageNum = $total_page;
-                              	};
-                              		?>
-                              		<li class='page-item'><a class='page-link' href='boardlist.php?page=1&searchTag=<?php echo $searchTag; ?>&searchInput=<?php echo $searchInput ?>&orderName=<?php echo $orderName; ?>&sort=<?php echo $sort ?>'>First</a></li>
-								    <?php
-								    /* pager : 페이지 번호 출력 */
-								    for($print_page = $s_pageNum; $print_page <= $e_pageNum; $print_page++){
-								    ?>
-								    <li class='page-item'><a class='page-link' href="boardlist.php?page=<?php echo $print_page; ?>&searchTag=<?php echo $searchTag;?>&searchInput=<?php echo $searchInput ?>&orderName=<?php echo $orderName; ?>&sort=<?php echo $sort ?>"><?php echo $print_page; ?></a></li>
-								    <?php };?>
-								    
-								    <li class='page-item'><a class='page-link' href='boardlist.php?page=<?php echo $e_pageNum; ?>&searchTag=<?php echo $searchTag;?>&searchInput=<?php echo $searchInput ?>&orderName=<?php echo $orderName; ?>&sort=<?php echo $sort ?>'>Last</a></li>
-                              </ul>
-                            </nav>
+                                	<tr><td class='align-middle text-center py-2' colspan='5'>오류내용 : " + <?php echo $m  ?> + "</td></tr>
+                                <?php }?>
                     </div>
                 </div>
             </div>
@@ -246,10 +242,12 @@
 	            $.ajax({
 	            url : '../../php/board.php',
 	            type : 'POST',
+	            dataType : 'text',
 	            data : {call_name:'delete_post', deletePk:deletePk},
-	            error : function(){
-	            console.log("실패");
+	            error : function(e){
+	            console.log(e);
 	            }, success : function(result){
+	            	console.log(result);
 	                }
 	            });
 	            $("#alertBox").empty();
