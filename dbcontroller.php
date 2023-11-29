@@ -38,17 +38,16 @@ class DBconn {
 	}
 	
 	//데이터 정보에 맞게 출력하기
-	function page_data_list($table=null, $row=null, $var=null, $flddata=null, $order_name=null, $order_sort=null, $start_list=null, $last_list=null){
+	function page_data_list($table=null, $flddata=null, $arr=null, $start_list=null, $last_list=null){
 		$query = "select " . $flddata . " from " . $table;
-		if(isset($row) && isset($var) && isset($order_name) && isset($order_sort)){
-			$query .= " where " . $row . " LIKE '%" . $var . "%'  order by ". $order_name . " " . $order_sort ." limit ". $start_list .",". $last_list. ";";
-		}elseif (isset($order_name) && isset($order_sort)){
-			$query .= " order by ". $order_name . " " . $order_sort ." limit ". $start_list .",". $last_list. ";";
-		}elseif (isset($row) && isset($var)){
-			$query .= " where " . $row . " LIKE '%" . $var . "%'limit ". $start_list .",". $last_list. ";";
-		}else{
-			$query .= " limit ". $start_list .",". $last_list. ";";
+		//검색, 정렬 배열 값 꺼내기
+		if (array_key_exists('searchInput', $arr)) {
+			$query .= " where " . $arr["searchTag"] . " LIKE '%" . $arr["searchInput"] . "%'";
 		}
+		if (array_key_exists('orderName', $arr)) {
+			$query .= " order by " . $arr["orderName"] . " " . $arr["sort"];
+		}
+		$query .=" limit ". $start_list .", ". $last_list. ";";
 		$result =  mysqli_query($this->db,$query);
 		if($result){
 			return $result;
@@ -106,6 +105,10 @@ class DBconn {
 	function getSqlFilter($sql){
 		return $sql;
 	}
+	//DB 불러오기    
+	function getDBconnect(){
+		return $this->db;
+	}
 	
 	//데이터 가져오기
  	function data_list($table) {
@@ -126,36 +129,5 @@ class DBconn {
 			else
 				return $rows[0][0];
 	}
-	//로그인 체크 데이터 검색
-	function login_data_search($id, $pw) {
-		$query = "SELECT id FROM auth_identity where id='" . $id . "' and pw='" . $pw . "';";
-		$search = mysqli_fetch_all(mysqli_query($this->db, $query));
-		
-		if(!(empty($search))) {
-			return  true;
-		} else {
-			return  false;
-		}
-	}
-	//board write
-	function post_write_set($title, $content, $writer){
-		$strip = mysqli_real_escape_string($this->db, strip_tags($content, '<br>'));
-		
-		$find = $this->Dbresult("member", "id", $writer, "pk");
-		$memberPk = mysqli_num_rows($find);
-		//echo $str;
-		if($memberPk){
-			$this->getDbInsert('board', "( memberPk, title, writer, content, insertTime, updateTime)", "( ". $memberPk ." ,'". $title."' ,'". $writer ."', '" . $strip . "' , now(), now())");
-		}else{
-			echo "등록실패 : " . mysqli_error($this->db);
-		}
-	}
-	//board update
-	function post_update_set($pk, $title, $content, $writer){
-		$strip = mysqli_real_escape_string($this->db, strip_tags($content, '<br>'));
-		
-		$this->getDbUpdate("board", "title='" . $title . "', content='"  . $strip . "', writer='" . $writer . "', updateTime= now()", "pk", $pk);
-	}
-	
 }
 ?>

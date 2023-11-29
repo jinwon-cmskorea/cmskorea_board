@@ -1,17 +1,25 @@
-<?php 
+<?php
 require_once "../dbcontroller.php";
 if(!session_id()) {
 	session_start();
 }
-
 $loginId = $_POST['name'];
 $loginPw = $_POST['password'];
-
 $md5Pw = md5($loginPw);
 
-$logincheckDBclass = new DBconn();
-
-if($logincheckDBclass->login_data_search($loginId, $md5Pw)) {
+//로그인 체크 데이터 검색
+function login_data_search($id, $pw) {
+	$logincheckDBclass = new DBconn();
+	$query = "SELECT id FROM auth_identity where id='" . $id . "' and pw='" . $pw . "';";
+	$search = mysqli_fetch_all(mysqli_query($logincheckDBclass->getDBconnect(), $query));
+	
+	if(!(empty($search))) {
+		return  true;
+	} else {
+		return  false;
+	}
+}
+if(login_data_search($loginId, $md5Pw)) {
 	$_SESSION['userName'] = $loginId;
 	header("location:../web/board/boardlist.php");
 } else{

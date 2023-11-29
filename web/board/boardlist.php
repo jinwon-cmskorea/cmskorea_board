@@ -43,9 +43,19 @@
     //페이지수
     $page_num = 10;
     
+    //검색, 정렬 데이터 배열에 저장
+    $selectarr = array();
+    if (isset($searchInput)){
+    	$selectarr["searchTag"] = $searchTag;
+    	$selectarr["searchInput"] = $searchInput;
+    }
+    if (isset($orderName)){
+    	$selectarr["orderName"] = $orderName;
+    	$selectarr["sort"] = $sort;
+    }
     //쿼리 사용 데이터 가져오기
     $table = "board";
-    $dblist = $DBclass->page_data_list($table, $searchTag, $searchInput, "*", $orderName, $sort, (($page-1)*$list_num), $list_num);
+    $dblist = $DBclass->page_data_list($table, "*", $selectarr, (($page-1)*$list_num), $list_num);
     if(isset($searchTag)&&isset($searchInput)){
     	//검색 결과 전체 페이지 수
     	$total_page = ceil($DBclass->getDbRows($table,$searchTag, $searchInput) / $list_num);
@@ -53,7 +63,7 @@
     	//전체 페이지 수
     	$total_page = ceil($DBclass->getDbAllRows($table) / $list_num);
     }
-
+    unset($selectarr);
     //전체 블럭 수
     $total_block = ceil($total_page / $page_num);
     //현재 페이지 번호
@@ -176,7 +186,6 @@
                     </div>
                 </div>
             </div>
-           <!-- <div ><a id="test" href="#">테스트 <?php echo $searchTag;?><?php echo $searchInput ?><?php echo $orderName ?><?php echo $sort ?>테스트</a></div> -->
         </div>
     <script type="text/javascript">
     	//정렬

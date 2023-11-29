@@ -96,6 +96,7 @@
 		                        }else{
 		                        	$(".alertmainbox").remove();
 		                        	appendAlert('&#9888;게시글 등록에 실패했습니다!', 'danger','alertBox');
+		                        	console.log(result);
 		                        }
 	                        }
 	                    });
